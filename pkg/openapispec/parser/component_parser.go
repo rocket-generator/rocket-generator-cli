@@ -23,7 +23,7 @@ func parseComponents(components openapi3.Components, api *openapispec.API) {
 
 func generateSchemaObject(name string, schema *openapi3.Schema) *openapispec.Schema {
 	schemaObject := openapispec.Schema{
-		Name:        name,
+		Name:        generateName(name),
 		Description: schema.Description,
 	}
 	requiredMap := map[string]bool{}
@@ -37,7 +37,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema) *openapispec.Sch
 			itemName := getSchemaNameFromSchema(property.Value.Items.Ref, property.Value.Items.Value)
 			item := property.Value.Items.Value
 			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
-				Name:          name,
+				Name:          generateName(name),
 				Type:          property.Value.Type,
 				Description:   property.Value.Description,
 				ArrayItemType: item.Type,
@@ -47,7 +47,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema) *openapispec.Sch
 		case "object":
 			propertyName := getSchemaNameFromSchema(property.Ref, property.Value)
 			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
-				Name:        name,
+				Name:        generateName(name),
 				Type:        property.Value.Type,
 				Description: property.Value.Description,
 				Reference:   propertyName,
@@ -55,7 +55,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema) *openapispec.Sch
 			})
 		default:
 			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
-				Name:        name,
+				Name:        generateName(name),
 				Type:        property.Value.Type,
 				Description: property.Value.Description,
 				Required:    required,

@@ -2,8 +2,7 @@ package openapispec
 
 // Schema ...
 type Schema struct {
-	Name        string
+	Name        Name
 	Description string
-	ObjectName  string
 	Properties  []*Property
 }

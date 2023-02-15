@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/jinzhu/inflection"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
 	"github.com/stoewer/go-strcase"
 	"strings"
@@ -12,11 +13,12 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API) {
 	for path, pathItem := range paths {
 		for method, operation := range pathItem.Operations() {
 			request := openapispec.Request{
-				Path:           path,
-				Method:         openapispec.NewNameForm(strings.ToUpper(method)),
-				PathNameForm:   openapispec.NewNameForm(strings.ToUpper(path)),
-				Description:    operation.Description,
-				RouteNameSpace: data.RouteNameSpace,
+				Path:             path,
+				Method:           openapispec.NewNameForm(strings.ToUpper(method)),
+				PathName:         generateName(getPathFormFromPath(path)),
+				Description:      operation.Description,
+				RouteNameSpace:   data.RouteNameSpace,
+				OrganizationName: data.OrganizationName,
 			}
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
@@ -45,6 +47,7 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API) {
 						requestSchemaName := strcase.SnakeCase(path) + "_" + strings.ToLower(method) + "_request"
 						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value)
 						request.RequestSchemaName = generateName(requestSchemaName)
+						request.RequestSchema = data.Schemas[requestSchemaName]
 					}
 				}
 			}
@@ -59,15 +62,44 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API) {
 						if strings.HasPrefix(statusCode, "2") {
 							success = true
 						}
-						request.Responses = append(request.Responses, &openapispec.Response{
+						response := &openapispec.Response{
 							StatusCode: statusCode,
 							Schema:     schema,
 							Success:    success,
-						})
+						}
+						request.Responses = append(request.Responses, response)
+						if success {
+							request.SuccessResponse = response
+						}
 					}
 				}
 			}
 			data.Requests = append(data.Requests, &request)
 		}
 	}
+}
+
+func getPathFormFromPath(path string) string {
+	if path == "/" {
+		return "index"
+	}
+	path = strings.TrimPrefix(path, "/")
+	if strings.HasSuffix(path, "/") {
+		path = path + "index"
+	}
+
+	elements := strings.Split(path, "/")
+	resultElements := make([]string, 0)
+	for _, element := range elements {
+		if strings.HasPrefix(element, "{") && strings.HasSuffix(element, "}") {
+			count := len(resultElements)
+			if count > 0 {
+				resultElements[count-1] = inflection.Singular(resultElements[count-1])
+			}
+		} else {
+			resultElements = append(resultElements, strings.ToLower(element))
+		}
+	}
+	pathName := strings.Join(resultElements, "_")
+	return strings.ToLower(pathName)
 }

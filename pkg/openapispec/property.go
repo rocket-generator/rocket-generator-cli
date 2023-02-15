@@ -2,8 +2,7 @@ package openapispec
 
 // Property ...
 type Property struct {
-	Name          string
-	ObjectName    string
+	Name          Name
 	Type          string
 	ObjectType    string
 	ArrayItemType string
