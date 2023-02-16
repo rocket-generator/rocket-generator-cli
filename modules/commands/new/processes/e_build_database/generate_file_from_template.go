@@ -12,7 +12,6 @@ import (
 )
 
 func (process *Process) generateFileFromTemplate(entity databaseschema.Entity, payload *newCommand.Payload) error {
-	fmt.Println("Generate files for : ", entity.Name.Original)
 	templatePath := filepath.Join(payload.ProjectPath, "templates", "database")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err

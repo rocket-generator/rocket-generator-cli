@@ -11,9 +11,11 @@ type Process struct {
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
 	for _, request := range payload.OpenAPISpec.Requests {
-		_byte, _ := json.MarshalIndent(request, "", "    ")
-		// _byte, _ := json.Marshal(request)
-		fmt.Println(string(_byte))
+		if payload.Debug {
+			_byte, _ := json.MarshalIndent(request, "", "    ")
+			// _byte, _ := json.Marshal(request)
+			fmt.Println(string(_byte))
+		}
 		if err := process.generateFileFromTemplate(*request, payload); err != nil {
 			return nil, err
 		}

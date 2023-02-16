@@ -1,18 +1,18 @@
-package d_build_app_api
+package e_build_database
 
 import (
 	"fmt"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
 	"path/filepath"
 )
 
-func (process *Process) generateFileFromTemplate(request openapispec.Request, payload *newCommand.Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "app_api")
+func (process *Process) generateFileFromTemplate(entity databaseschema.Entity, payload *newCommand.Payload) error {
+	templatePath := filepath.Join(payload.ProjectPath, "templates", "admin_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (process *Process) generateFileFromTemplate(request openapispec.Request, pa
 				return err
 			}
 			resultDirectory := filepath.Join(payload.ProjectPath, relativePath)
-			resultPath, err := template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, request)
+			resultPath, err := template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, entity)
 			if err != nil {
 				error_handler.HandleError(err)
 				return err
@@ -38,5 +38,6 @@ func (process *Process) generateFileFromTemplate(request openapispec.Request, pa
 		}
 		return nil
 	})
+	fmt.Println("")
 	return err
 }

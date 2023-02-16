@@ -9,7 +9,12 @@ type Process struct {
 }
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
-	schema, err := databaseschema.Parse(payload.DatabaseFileName, payload.ProjectName, payload.OrganizationName)
+	schema, err := databaseschema.Parse(
+		payload.DatabaseFileName,
+		payload.ProjectName,
+		payload.OrganizationName,
+		payload.TypeMapper,
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ package databaseschema
 type Column struct {
 	Name              Name
 	DataType          Name
+	ObjectType        string
 	Primary           bool
 	DefaultValue      string
 	Nullable          bool

@@ -9,7 +9,13 @@ type Process struct {
 }
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
-	api, err := openApiParser.Parse(payload.ApiFileName, "app", payload.ProjectName, payload.OrganizationName)
+	api, err := openApiParser.Parse(
+		payload.ApiFileName,
+		"app",
+		payload.ProjectName,
+		payload.OrganizationName,
+		payload.TypeMapper,
+	)
 	if err != nil {
 		return nil, err
 	}

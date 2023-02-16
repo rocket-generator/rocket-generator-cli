@@ -1,7 +1,8 @@
 package databaseschema
 
 import (
-	"io/ioutil"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -11,14 +12,14 @@ import (
 )
 
 // Parse ...
-func Parse(filePath string, projectName string, organizationName string) (*Schema, error) {
+func Parse(filePath string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*Schema, error) {
 	data := Schema{
 		FilePath:           filePath,
 		ProjectName:        projectName,
 		OrganizationName:   organizationName,
 		PrimaryKeyDataType: "int64",
 	}
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
@@ -32,11 +33,12 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 	for _, entity := range entities {
 		entityName := entity[1]
 		entityObject := Entity{
-			Name:          generateName(entityName),
-			HasDecimal:    false,
-			HasJSON:       false,
-			UseSoftDelete: false,
-			DateTime:      time.Now().Format("20060201150405"),
+			Name:             generateName(entityName),
+			HasDecimal:       false,
+			HasJSON:          false,
+			UseSoftDelete:    false,
+			DateTime:         time.Now().Format("20060201150405"),
+			OrganizationName: organizationName,
 		}
 		columns := strings.Split(strings.TrimSpace(entity[2]), "\n")
 		for _, column := range columns {
@@ -66,6 +68,7 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 					TableName:    entityObject.Name,
 					Name:         generateName(name),
 					DataType:     generateName(dataType),
+					ObjectType:   data_mapper.MapString(typeMapper, dataType),
 					Primary:      primary,
 					Nullable:     nullable,
 					DefaultValue: defaultValue,

@@ -1,7 +1,9 @@
 package a_download_template
 
 import (
+	"github.com/fatih/color"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"os"
 	"path"
 	"path/filepath"
@@ -34,5 +36,17 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	}
 	projectPath := path.Join(payload.ProjectBasePath, payload.ProjectName)
 	payload.ProjectPath = projectPath
+
+	typeMapperFilePath := filepath.Join(projectPath, "templates", "data", "types.json")
+	typeMapper, err := data_mapper.Parse(typeMapperFilePath)
+	if err == nil {
+		red := color.New(color.FgGreen)
+		_, _ = red.Println("Type mapping file found at: " + typeMapperFilePath)
+		payload.TypeMapper = typeMapper
+	} else {
+		red := color.New(color.FgYellow)
+		_, _ = red.Println("No type mapping file found at: " + typeMapperFilePath)
+	}
+
 	return payload, nil
 }

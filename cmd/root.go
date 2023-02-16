@@ -9,6 +9,7 @@ import (
 )
 
 var cfgFile string
+var debugFlag bool
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -32,6 +33,8 @@ func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rocket-generator.yaml)")
+	rootCmd.PersistentFlags().BoolVar(&debugFlag, "debug", false, "debug option")
+
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 

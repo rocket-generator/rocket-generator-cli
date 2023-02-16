@@ -3,12 +3,13 @@ package parser
 import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/jinzhu/inflection"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
 	"github.com/stoewer/go-strcase"
 	"strings"
 )
 
-func parsePaths(paths openapi3.Paths, data *openapispec.API) {
+func parsePaths(paths openapi3.Paths, data *openapispec.API, typeMapper *data_mapper.Mapper) {
 
 	for path, pathItem := range paths {
 		for method, operation := range pathItem.Operations() {
@@ -43,10 +44,10 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API) {
 					if requestSchema.Schema.Ref != "" {
 						requestName := getSchemaNameFromSchema(requestSchema.Schema.Ref, requestSchema.Schema.Value)
 						request.RequestSchemaName = generateName(requestName)
-						request.RequestSchema = generateSchemaObject(requestSchema.Schema.Ref, requestSchema.Schema.Value)
+						request.RequestSchema = generateSchemaObject(requestSchema.Schema.Ref, requestSchema.Schema.Value, typeMapper)
 					} else {
 						requestSchemaName := strcase.SnakeCase(path) + "_" + strings.ToLower(method) + "_request"
-						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value)
+						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value, typeMapper)
 						request.RequestSchemaName = generateName(requestSchemaName)
 						request.RequestSchema = data.Schemas[requestSchemaName]
 					}

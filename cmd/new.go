@@ -14,6 +14,7 @@ var arguments = newCommand.Arguments{
 	ApiFileName:      "",
 	DatabaseFileName: "",
 	OrganizationName: "",
+	Debug:            false,
 }
 
 var newCmd = &cobra.Command{
@@ -33,6 +34,7 @@ rocket new your-service-name --template go-gin
 			}
 			arguments.ProjectBasePath = currentPath
 		}
+		arguments.Debug = debugFlag
 
 		command := newCommand.Command{}
 		err := command.Execute(arguments)

@@ -7,4 +7,5 @@ type Arguments struct {
 	ApiFileName      string
 	DatabaseFileName string
 	OrganizationName string
+	Debug            bool
 }

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
 	"github.com/stoewer/go-strcase"
 	"net/url"
@@ -9,7 +10,7 @@ import (
 )
 
 // Parse ...
-func Parse(filePath string, namespace string, projectName string, organizationName string) (*openapispec.API, error) {
+func Parse(filePath string, namespace string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*openapispec.API, error) {
 	defaultRouteNamespace := namespace
 	data := openapispec.API{
 		FilePath:         filePath,
@@ -33,8 +34,8 @@ func Parse(filePath string, namespace string, projectName string, organizationNa
 	}
 
 	data.RouteNameSpace = buildRouteNameSpace(data.BasePath, defaultRouteNamespace)
-	parseComponents(*openApiData.Components, &data)
-	parsePaths(openApiData.Paths, &data)
+	parseComponents(*openApiData.Components, &data, typeMapper)
+	parsePaths(openApiData.Paths, &data, typeMapper)
 
 	return &data, nil
 }
