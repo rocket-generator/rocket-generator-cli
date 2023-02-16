@@ -1,4 +1,4 @@
-package e_build_database
+package f_build_admin_api
 
 import (
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"

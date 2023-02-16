@@ -1,4 +1,4 @@
-package e_build_database
+package f_build_admin_api
 
 import (
 	"fmt"

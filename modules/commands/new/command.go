@@ -10,6 +10,7 @@ import (
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/c_parse_database_spec_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/d_build_app_api"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/e_build_database"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/f_build_admin_api"
 )
 
 type Command struct {
@@ -35,6 +36,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		&c_parse_database_spec_file.Process{},
 		&d_build_app_api.Process{},
 		&e_build_database.Process{},
+		&f_build_admin_api.Process{},
 	}
 
 	for _, process := range _processes {
