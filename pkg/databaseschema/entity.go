@@ -11,4 +11,5 @@ type Entity struct {
 	HasJSON       bool
 	PackageName   string
 	UseSoftDelete bool
+	DateTime      string
 }

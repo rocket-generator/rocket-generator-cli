@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/jinzhu/inflection"
 	"github.com/stoewer/go-strcase"
@@ -35,6 +36,7 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 			HasDecimal:    false,
 			HasJSON:       false,
 			UseSoftDelete: false,
+			DateTime:      time.Now().Format("20060201150405"),
 		}
 		columns := strings.Split(strings.TrimSpace(entity[2]), "\n")
 		for _, column := range columns {
@@ -63,7 +65,7 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 				columnObject := &Column{
 					TableName:    entityObject.Name,
 					Name:         generateName(name),
-					DataType:     dataType,
+					DataType:     generateName(dataType),
 					Primary:      primary,
 					Nullable:     nullable,
 					DefaultValue: defaultValue,
@@ -122,6 +124,7 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 			continue
 		}
 		leftRelation := Relation{
+			Name:             generateName(rightTable.Name.Original),
 			Entity:           rightTable,
 			Column:           nil,
 			MultipleEntities: false,
@@ -140,6 +143,7 @@ func Parse(filePath string, projectName string, organizationName string) (*Schem
 			}
 		}
 		rightRelation := Relation{
+			Name:             generateName(leftTable.Name.Original),
 			Entity:           leftTable,
 			Column:           nil,
 			MultipleEntities: false,
@@ -199,10 +203,10 @@ func checkAPIUpdatable(column *Column) bool {
 }
 
 func getAPIType(column *Column) string {
-	if strings.HasPrefix(column.DataType, "decimal") || strings.HasPrefix(column.DataType, "numeric") {
+	if strings.HasPrefix(column.DataType.Original, "decimal") || strings.HasPrefix(column.DataType.Original, "numeric") {
 		return "number"
 	}
-	switch column.DataType {
+	switch column.DataType.Original {
 	case "int":
 		return "integer"
 	case "bigint":
@@ -226,6 +230,12 @@ func generateName(name string) Name {
 	plural := inflection.Plural(name)
 	return Name{
 		Original: name,
+		Default: NameForm{
+			Camel: strcase.LowerCamelCase(name),
+			Title: strcase.UpperCamelCase(name),
+			Snake: strcase.SnakeCase(name),
+			Kebab: strcase.KebabCase(name),
+		},
 		Singular: NameForm{
 			Camel: strcase.LowerCamelCase(singular),
 			Title: strcase.UpperCamelCase(singular),

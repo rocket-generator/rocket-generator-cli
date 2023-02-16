@@ -43,6 +43,7 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API) {
 					if requestSchema.Schema.Ref != "" {
 						requestName := getSchemaNameFromSchema(requestSchema.Schema.Ref, requestSchema.Schema.Value)
 						request.RequestSchemaName = generateName(requestName)
+						request.RequestSchema = generateSchemaObject(requestSchema.Schema.Ref, requestSchema.Schema.Value)
 					} else {
 						requestSchemaName := strcase.SnakeCase(path) + "_" + strings.ToLower(method) + "_request"
 						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value)

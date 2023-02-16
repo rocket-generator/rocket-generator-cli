@@ -2,9 +2,9 @@ package databaseschema
 
 // Relation ...
 type Relation struct {
+	Name             Name
 	Entity           *Entity
 	Column           *Column
 	RelationType     string
-	ObjectName       string
 	MultipleEntities bool
 }

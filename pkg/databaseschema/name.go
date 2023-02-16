@@ -3,6 +3,7 @@ package databaseschema
 // Name ...
 type Name struct {
 	Original string
+	Default  NameForm
 	Singular NameForm
 	Plural   NameForm
 }
