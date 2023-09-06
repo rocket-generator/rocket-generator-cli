@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"strings"
 )
 
 type Mapper map[string]string
@@ -33,7 +34,8 @@ func MapString(mapper *Mapper, value string) string {
 	if mapper == nil {
 		return value
 	}
-	if mappedValue, ok := (*mapper)[value]; ok {
+	lowerCaseValue := strings.ToLower(value)
+	if mappedValue, ok := (*mapper)[lowerCaseValue]; ok {
 		return mappedValue
 	}
 	return value

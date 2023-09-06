@@ -1,19 +1,17 @@
-package databaseschema
+package parser
 
 import (
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"os"
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/jinzhu/inflection"
-	"github.com/stoewer/go-strcase"
 )
 
-// Parse ...
-func Parse(filePath string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*Schema, error) {
-	data := Schema{
+// ParsePlantUML ...
+func ParsePlantUML(filePath string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*objects.Schema, error) {
+	data := objects.Schema{
 		FilePath:           filePath,
 		ProjectName:        projectName,
 		OrganizationName:   organizationName,
@@ -32,12 +30,16 @@ func Parse(filePath string, projectName string, organizationName string, typeMap
 
 	for _, entity := range entities {
 		entityName := entity[1]
-		entityObject := Entity{
+		entityObject := objects.Entity{
 			Name:             generateName(entityName),
 			HasDecimal:       false,
 			HasJSON:          false,
 			UseSoftDelete:    false,
 			DateTime:         time.Now().Format("20060201150405"),
+			Year:             time.Now().Format("2006"),
+			Month:            time.Now().Format("02"),
+			Day:              time.Now().Format("01"),
+			Time:             time.Now().Format("150405"),
 			OrganizationName: organizationName,
 		}
 		columns := strings.Split(strings.TrimSpace(entity[2]), "\n")
@@ -61,10 +63,10 @@ func Parse(filePath string, projectName string, organizationName string, typeMap
 						dataType = "bigserial"
 					} else {
 						defaultValue = "uuid_generate_v4()"
-						data.PrimaryKeyDataType = "string"
+						data.PrimaryKeyDataType = "uuid"
 					}
 				}
-				columnObject := &Column{
+				columnObject := &objects.Column{
 					TableName:    entityObject.Name,
 					Name:         generateName(name),
 					DataType:     generateName(dataType),
@@ -126,7 +128,7 @@ func Parse(filePath string, projectName string, organizationName string, typeMap
 			(leftColumnIndex != -1 && rightColumnIndex != -1) {
 			continue
 		}
-		leftRelation := Relation{
+		leftRelation := objects.Relation{
 			Name:             generateName(rightTable.Name.Original),
 			Entity:           rightTable,
 			Column:           nil,
@@ -145,7 +147,7 @@ func Parse(filePath string, projectName string, organizationName string, typeMap
 				leftRelation.RelationType = "hasOne"
 			}
 		}
-		rightRelation := Relation{
+		rightRelation := objects.Relation{
 			Name:             generateName(leftTable.Name.Original),
 			Entity:           leftTable,
 			Column:           nil,
@@ -168,88 +170,4 @@ func Parse(filePath string, projectName string, organizationName string, typeMap
 		data.Entities[rightTableIndex].Relations = append(data.Entities[rightTableIndex].Relations, &rightRelation)
 	}
 	return &data, nil
-}
-
-func findEntityIndex(name string, schema *Schema) int {
-	for index, entity := range schema.Entities {
-		if entity.Name.Original == name {
-			return index
-		}
-	}
-	return -1
-}
-
-func findRelationColumnIndex(name string, table *Entity) int {
-	columnName := inflection.Singular(name) + "_id"
-	for index, column := range table.Columns {
-		if column.Name.Original == columnName {
-			return index
-		}
-	}
-	return -1
-}
-
-func removeComment(content string) string {
-	commentRegex := regexp.MustCompile(`(?ms)\/'.+?'\/`)
-	return commentRegex.ReplaceAllString(content, "")
-}
-
-func checkAPIReturnable(column *Column) bool {
-	return true
-}
-
-func checkAPIUpdatable(column *Column) bool {
-	if column.Name.Original == "id" || column.Name.Original == "created_at" || column.Name.Original == "updated_at" || column.Name.Original == "deleted_at" {
-		return false
-	}
-	return true
-}
-
-func getAPIType(column *Column) string {
-	if strings.HasPrefix(column.DataType.Original, "decimal") || strings.HasPrefix(column.DataType.Original, "numeric") {
-		return "number"
-	}
-	switch column.DataType.Original {
-	case "int":
-		return "integer"
-	case "bigint":
-		return "string"
-	case "text":
-		return "string"
-	case "boolean":
-		return "boolean"
-	case "float":
-		return "number"
-	case "jsonb":
-		return "string"
-	case "timestamp":
-		return "integer"
-	}
-	return "string"
-}
-
-func generateName(name string) Name {
-	singular := inflection.Singular(name)
-	plural := inflection.Plural(name)
-	return Name{
-		Original: name,
-		Default: NameForm{
-			Camel: strcase.LowerCamelCase(name),
-			Title: strcase.UpperCamelCase(name),
-			Snake: strcase.SnakeCase(name),
-			Kebab: strcase.KebabCase(name),
-		},
-		Singular: NameForm{
-			Camel: strcase.LowerCamelCase(singular),
-			Title: strcase.UpperCamelCase(singular),
-			Snake: strcase.SnakeCase(singular),
-			Kebab: strcase.KebabCase(singular),
-		},
-		Plural: NameForm{
-			Camel: strcase.LowerCamelCase(plural),
-			Title: strcase.UpperCamelCase(plural),
-			Snake: strcase.SnakeCase(plural),
-			Kebab: strcase.KebabCase(plural),
-		},
-	}
 }

@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 import "github.com/stoewer/go-strcase"
 

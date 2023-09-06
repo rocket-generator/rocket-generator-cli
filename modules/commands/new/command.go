@@ -27,6 +27,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		OrganizationName: arguments.OrganizationName,
 		OpenAPISpec:      nil,
 		DatabaseSchema:   nil,
+		TypeMapper:       nil,
 		Count:            0,
 	}
 

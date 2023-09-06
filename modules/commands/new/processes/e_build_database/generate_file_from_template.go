@@ -3,7 +3,7 @@ package e_build_database
 import (
 	"fmt"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-func (process *Process) generateFileFromTemplate(entity databaseschema.Entity, payload *newCommand.Payload) error {
+func (process *Process) generateFileFromTemplate(entity objects.Entity, payload *newCommand.Payload) error {
 	templatePath := filepath.Join(payload.ProjectPath, "templates", "database")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err

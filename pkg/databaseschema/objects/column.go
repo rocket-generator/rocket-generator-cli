@@ -1,9 +1,10 @@
-package databaseschema
+package objects
 
 // Column ...
 type Column struct {
 	Name              Name
 	DataType          Name
+	DataSize          int
 	ObjectType        string
 	Primary           bool
 	DefaultValue      string
@@ -16,4 +17,5 @@ type Column struct {
 	TableName         Name
 	RelationTableName Name
 	IsSystemUseColumn bool
+	Note              string
 }

@@ -3,22 +3,22 @@ package parser
 import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
 	"net/url"
 	"strings"
 )
 
 // Parse ...
-func Parse(filePath string, namespace string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*openapispec.API, error) {
+func Parse(filePath string, namespace string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*objects.API, error) {
 	defaultRouteNamespace := namespace
-	data := openapispec.API{
+	data := objects.API{
 		FilePath:         filePath,
 		BasePath:         "/",
 		APINameSpace:     namespace,
 		ProjectName:      projectName,
 		OrganizationName: organizationName,
-		Schemas:          map[string]*openapispec.Schema{},
+		Schemas:          map[string]*objects.Schema{},
 		RouteNameSpace:   defaultRouteNamespace,
 	}
 	openApiData, err := openapi3.NewLoader().LoadFromFile(filePath)

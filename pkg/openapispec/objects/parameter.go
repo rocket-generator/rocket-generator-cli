@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // Parameter ...
 type Parameter struct {

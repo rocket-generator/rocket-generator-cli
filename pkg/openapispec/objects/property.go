@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // Property ...
 type Property struct {

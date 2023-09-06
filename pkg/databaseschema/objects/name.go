@@ -1,4 +1,4 @@
-package databaseschema
+package objects
 
 // Name ...
 type Name struct {

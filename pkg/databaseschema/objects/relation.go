@@ -1,4 +1,4 @@
-package databaseschema
+package objects
 
 // Relation ...
 type Relation struct {

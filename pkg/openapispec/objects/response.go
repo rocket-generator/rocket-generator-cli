@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // Response ...
 type Response struct {

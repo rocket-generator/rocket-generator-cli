@@ -3,12 +3,12 @@ package parser
 import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
 	"strings"
 )
 
-func parseComponents(components openapi3.Components, api *openapispec.API, typeMapper *data_mapper.Mapper) {
+func parseComponents(components openapi3.Components, api *objects.API, typeMapper *data_mapper.Mapper) {
 	for name, schemaRef := range components.Schemas {
 		specSchema := schemaRef.Value
 		if specSchema == nil {
@@ -22,8 +22,8 @@ func parseComponents(components openapi3.Components, api *openapispec.API, typeM
 	}
 }
 
-func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data_mapper.Mapper) *openapispec.Schema {
-	schemaObject := openapispec.Schema{
+func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data_mapper.Mapper) *objects.Schema {
+	schemaObject := objects.Schema{
 		Name:        generateName(name),
 		Description: schema.Description,
 	}
@@ -37,7 +37,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 		case "array":
 			itemName := getSchemaNameFromSchema(property.Value.Items.Ref, property.Value.Items.Value)
 			item := property.Value.Items.Value
-			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
+			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:          generateName(name),
 				Type:          property.Value.Type,
 				ObjectType:    data_mapper.MapString(typeMapper, property.Value.Type),
@@ -48,7 +48,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 			})
 		case "object":
 			propertyName := getSchemaNameFromSchema(property.Ref, property.Value)
-			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
+			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:        generateName(name),
 				Type:        property.Value.Type,
 				ObjectType:  data_mapper.MapString(typeMapper, property.Value.Type),
@@ -57,7 +57,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 				Required:    required,
 			})
 		default:
-			schemaObject.Properties = append(schemaObject.Properties, &openapispec.Property{
+			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:        generateName(name),
 				Type:        property.Value.Type,
 				ObjectType:  data_mapper.MapString(typeMapper, property.Value.Type),

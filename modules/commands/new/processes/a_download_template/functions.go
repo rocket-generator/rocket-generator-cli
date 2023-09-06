@@ -13,14 +13,22 @@ import (
 )
 
 var templates = map[string]string{
-	"go-gin": "https://github.com/rocket-generator/go-gin-template/archive/refs/heads/master.zip",
+	"go-gin":      "https://github.com/rocket-generator/go-gin-template/archive/refs/heads/master.zip",
+	"php-laravel": "https://github.com/rocket-generator/php-laravel-template/archive/refs/heads/master.zip",
 }
 
 func getDownloadURL(templateName string) (*string, error) {
 	lowerTemplateName := strings.ToLower(templateName)
 	url, ok := templates[lowerTemplateName]
 	if !ok {
-		return nil, errors.New("template not found")
+		if _, err := os.Stat(templateName); err != nil {
+			return nil, errors.New("template not found")
+		}
+		absolutePath, err := filepath.Abs(templateName)
+		if err != nil {
+			return nil, err
+		}
+		return &absolutePath, nil
 	}
 
 	return &url, nil

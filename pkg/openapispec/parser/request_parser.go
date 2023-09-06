@@ -4,18 +4,18 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/jinzhu/inflection"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
 	"strings"
 )
 
-func parsePaths(paths openapi3.Paths, data *openapispec.API, typeMapper *data_mapper.Mapper) {
+func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper.Mapper) {
 
 	for path, pathItem := range paths {
 		for method, operation := range pathItem.Operations() {
-			request := openapispec.Request{
+			request := objects.Request{
 				Path:             path,
-				Method:           openapispec.NewNameForm(strings.ToUpper(method)),
+				Method:           objects.NewNameForm(strings.ToUpper(method)),
 				PathName:         generateName(getPathFormFromPath(path)),
 				Description:      operation.Description,
 				RouteNameSpace:   data.RouteNameSpace,
@@ -24,7 +24,7 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API, typeMapper *data_ma
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
 				parameter := parameterReference.Value
-				request.Parameters = append(request.Parameters, &openapispec.Parameter{
+				request.Parameters = append(request.Parameters, &objects.Parameter{
 					Name:     generateName(parameter.Name),
 					In:       parameter.In,
 					Required: parameter.Required,
@@ -32,7 +32,7 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API, typeMapper *data_ma
 			}
 			for _, parameterReference := range pathItem.Parameters {
 				parameter := parameterReference.Value
-				request.Parameters = append(request.Parameters, &openapispec.Parameter{
+				request.Parameters = append(request.Parameters, &objects.Parameter{
 					Name:     generateName(parameter.Name),
 					In:       parameter.In,
 					Required: parameter.Required,
@@ -64,7 +64,7 @@ func parsePaths(paths openapi3.Paths, data *openapispec.API, typeMapper *data_ma
 						if strings.HasPrefix(statusCode, "2") {
 							success = true
 						}
-						response := &openapispec.Response{
+						response := &objects.Response{
 							StatusCode: statusCode,
 							Schema:     schema,
 							Success:    success,

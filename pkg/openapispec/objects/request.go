@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // Request ...
 type Request struct {

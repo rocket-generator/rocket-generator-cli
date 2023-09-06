@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // API ...
 type API struct {

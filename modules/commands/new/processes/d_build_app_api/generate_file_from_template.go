@@ -4,14 +4,14 @@ import (
 	"fmt"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
 	"path/filepath"
 )
 
-func (process *Process) generateFileFromTemplate(request openapispec.Request, payload *newCommand.Payload) error {
+func (process *Process) generateFileFromTemplate(request objects.Request, payload *newCommand.Payload) error {
 	templatePath := filepath.Join(payload.ProjectPath, "templates", "app_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err

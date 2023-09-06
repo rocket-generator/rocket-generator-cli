@@ -1,4 +1,4 @@
-package openapispec
+package objects
 
 // Schema ...
 type Schema struct {
