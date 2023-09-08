@@ -2,8 +2,8 @@ package payload
 
 import (
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
-	objects2 "github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
+	databaseObject "github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
+	apiObjects "github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 )
 
 type Payload struct {
@@ -14,8 +14,8 @@ type Payload struct {
 	ApiFileName      string
 	DatabaseFileName string
 	OrganizationName string
-	OpenAPISpec      *objects2.API
-	DatabaseSchema   *objects.Schema
+	OpenAPISpec      *apiObjects.API
+	DatabaseSchema   *databaseObject.Schema
 	TypeMapper       *data_mapper.Mapper
 	Count            int
 	Debug            bool

@@ -28,10 +28,12 @@ func GenerateFileFromTemplate(templateFilePath string, projectBasePath string, d
 		return nil, err
 	}
 	resultFileName := fileNameBuffer.String()
-
+	if resultFileName == filepath.Ext(resultFileName) {
+		return nil, nil
+	}
 	contentTemplate, err := textTemplate.ParseFiles(templateFilePath)
 	contentBuffer := &bytes.Buffer{}
-	fmt.Println("Generating file from template: " + resultFileName)
+	fmt.Println("Generating file content from template: " + resultFileName)
 	err = contentTemplate.Execute(contentBuffer, data)
 	if err != nil {
 		error_handler.HandleError(err)
@@ -43,4 +45,20 @@ func GenerateFileFromTemplate(templateFilePath string, projectBasePath string, d
 		return nil, err
 	}
 	return &resultFileName, nil
+}
+
+func GenerateStringFromTemplate(templateFilePath string, data interface{}) (*string, error) {
+	fmt.Println("Generating string from template: " + templateFilePath)
+	contentTemplate, err := textTemplate.ParseFiles(templateFilePath)
+	if err != nil {
+		return nil, err
+	}
+	contentBuffer := &bytes.Buffer{}
+	err = contentTemplate.Execute(contentBuffer, data)
+	if err != nil {
+		error_handler.HandleError(err)
+		return nil, err
+	}
+	result := contentBuffer.String()
+	return &result, nil
 }

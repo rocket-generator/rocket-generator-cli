@@ -20,5 +20,9 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 			return nil, err
 		}
 	}
+	err := process.generateEmbeddedPartFromTemplate(payload.OpenAPISpec.Requests, payload)
+	if err != nil {
+		return nil, err
+	}
 	return payload, nil
 }

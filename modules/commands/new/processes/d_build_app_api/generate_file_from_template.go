@@ -34,7 +34,9 @@ func (process *Process) generateFileFromTemplate(request objects.Request, payloa
 				error_handler.HandleError(err)
 				return err
 			}
-			fmt.Println("Generated file: ", *resultPath)
+			if resultPath != nil {
+				fmt.Println("Generated file: ", *resultPath)
+			}
 		}
 		return nil
 	})
