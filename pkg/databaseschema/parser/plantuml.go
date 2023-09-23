@@ -99,6 +99,7 @@ func ParsePlantUML(filePath string, projectName string, organizationName string,
 				} else {
 					columnObject.IsSystemUseColumn = false
 				}
+				columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject)
 			}
 		}
 		data.Entities = append(data.Entities, &entityObject)

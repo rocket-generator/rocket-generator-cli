@@ -1,18 +1,17 @@
-package f_build_admin_api
+package e_build_app_api
 
 import (
-	"fmt"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
 	"path/filepath"
 )
 
-func (process *Process) generateFileFromTemplate(entity objects.Entity, payload *newCommand.Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "admin_api")
+func (process *Process) generateFileFromTemplate(request objects.Request, payload *newCommand.Payload) error {
+	templatePath := filepath.Join(payload.ProjectPath, "templates", "app_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
@@ -29,15 +28,13 @@ func (process *Process) generateFileFromTemplate(entity objects.Entity, payload 
 				return err
 			}
 			resultDirectory := filepath.Join(payload.ProjectPath, relativePath)
-			resultPath, err := template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, entity)
+			_, err = template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, request)
 			if err != nil {
 				error_handler.HandleError(err)
 				return err
 			}
-			fmt.Println("Generated file: ", *resultPath)
 		}
 		return nil
 	})
-	fmt.Println("")
 	return err
 }

@@ -52,7 +52,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 					dataType = "bigserial"
 				} else {
 					defaultValue = "uuid_generate_v4()"
-					entityObject.PrimaryKeyDataType = "string"
+					entityObject.PrimaryKeyDataType = "uuid"
 				}
 			}
 
@@ -91,6 +91,8 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			} else {
 				columnObject.IsSystemUseColumn = false
 			}
+
+			columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject)
 		}
 		entities = append(entities, &entityObject)
 	}

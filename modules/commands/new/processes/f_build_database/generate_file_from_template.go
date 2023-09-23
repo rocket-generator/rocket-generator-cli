@@ -1,4 +1,4 @@
-package e_build_database
+package f_build_database
 
 import (
 	"fmt"
@@ -29,12 +29,11 @@ func (process *Process) generateFileFromTemplate(entity objects.Entity, payload 
 				return err
 			}
 			resultDirectory := filepath.Join(payload.ProjectPath, relativePath)
-			resultPath, err := template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, entity)
+			_, err = template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, entity)
 			if err != nil {
 				error_handler.HandleError(err)
 				return err
 			}
-			fmt.Println("Generated file: ", *resultPath)
 		}
 		return nil
 	})

@@ -1,11 +1,10 @@
-package d_build_app_api
+package g_build_admin_api
 
 import (
-	"fmt"
 	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
@@ -14,11 +13,11 @@ import (
 )
 
 type Entities struct {
-	Requests []*objects.Request
+	Entities []*objects.Entity
 }
 
-func (process *Process) generateEmbeddedPartFromTemplate(requests []*objects.Request, payload *newCommand.Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "app_api")
+func (process *Process) generateEmbeddedPartFromTemplate(entities []*objects.Entity, payload *newCommand.Payload) error {
+	templatePath := filepath.Join(payload.ProjectPath, "templates", "admin_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
@@ -29,7 +28,6 @@ func (process *Process) generateEmbeddedPartFromTemplate(requests []*objects.Req
 		extension := filepath.Ext(path)
 
 		if extension == ".embed" && info.IsDir() {
-			fmt.Println("Generating embedded part from template: " + path)
 			_, file := filepath.Split(path)
 			targetPath := path[:len(path)-len(filepath.Ext(file))]
 			relativePath, err := filepath.Rel(templatePath, targetPath)
@@ -50,12 +48,11 @@ func (process *Process) generateEmbeddedPartFromTemplate(requests []*objects.Req
 					if ptmplExtension == ".ptmpl" && !partialTemplateFile.IsDir() {
 						partialTemplateFullPath := filepath.Join(path, partialTemplateFile.Name())
 						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, Entities{
-							Requests: requests,
+							Entities: entities,
 						})
 						if err != nil {
 							return err
 						}
-						fmt.Println("Generating embedded part from template: " + partialTemplateFile.Name())
 						originalContent, err := os.ReadFile(targetFile)
 						if err != nil {
 							return err

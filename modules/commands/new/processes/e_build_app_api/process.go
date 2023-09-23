@@ -1,4 +1,4 @@
-package e_build_database
+package e_build_app_api
 
 import (
 	"encoding/json"
@@ -10,17 +10,16 @@ type Process struct {
 }
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
-	for _, entity := range payload.DatabaseSchema.Entities {
+	for _, request := range payload.OpenAPISpec.Requests {
 		if payload.Debug {
-			_byte, _ := json.MarshalIndent(entity, "", "    ")
-			// _byte, _ := json.Marshal(request)
+			_byte, _ := json.MarshalIndent(request, "", "    ")
 			fmt.Println(string(_byte))
 		}
-		if err := process.generateFileFromTemplate(*entity, payload); err != nil {
+		if err := process.generateFileFromTemplate(*request, payload); err != nil {
 			return nil, err
 		}
 	}
-	err := process.generateEmbeddedPartFromTemplate(payload.DatabaseSchema.Entities, payload)
+	err := process.generateEmbeddedPartFromTemplate(payload.OpenAPISpec.Requests, payload)
 	if err != nil {
 		return nil, err
 	}

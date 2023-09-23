@@ -15,6 +15,7 @@ import (
 var templates = map[string]string{
 	"go-gin":      "https://github.com/rocket-generator/go-gin-template/archive/refs/heads/master.zip",
 	"php-laravel": "https://github.com/rocket-generator/php-laravel-template/archive/refs/heads/master.zip",
+	"react-admin": "https://github.com/rocket-generator/typescript-react-admin-template/archive/refs/heads/master.zip",
 }
 
 func getDownloadURL(templateName string) (*string, error) {

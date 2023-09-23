@@ -8,9 +8,10 @@ import (
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/a_download_template"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_api_spec_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/c_parse_database_spec_file"
-	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/d_build_app_api"
-	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/e_build_database"
-	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/f_build_admin_api"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/d_build_crossover_information"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/e_build_app_api"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/f_build_database"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/g_build_admin_api"
 )
 
 type Command struct {
@@ -35,9 +36,10 @@ func (c *Command) Execute(arguments Arguments) error {
 		&a_download_template.Process{},
 		&b_parse_api_spec_file.Process{},
 		&c_parse_database_spec_file.Process{},
-		&d_build_app_api.Process{},
-		&e_build_database.Process{},
-		&f_build_admin_api.Process{},
+		&d_build_crossover_information.Process{},
+		&e_build_app_api.Process{},
+		&f_build_database.Process{},
+		&g_build_admin_api.Process{},
 	}
 
 	for _, process := range _processes {

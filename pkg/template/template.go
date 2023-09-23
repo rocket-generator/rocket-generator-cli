@@ -3,6 +3,7 @@ package template
 import (
 	"bytes"
 	"fmt"
+	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 	"os"
 	"path/filepath"
@@ -11,9 +12,9 @@ import (
 
 // GenerateFileFromTemplate ...
 func GenerateFileFromTemplate(templateFilePath string, projectBasePath string, destinationFileDirectory string, data interface{}) (*string, error) {
-	fmt.Println("Generating file from template: " + templateFilePath)
-	_, file := filepath.Split(templateFilePath)
 
+	// Convert File Name
+	_, file := filepath.Split(templateFilePath)
 	file = file[:len(file)-len(filepath.Ext(file))]
 	fileTemplate, err := textTemplate.New("filename_template").Parse(file)
 	if err != nil {
@@ -31,15 +32,37 @@ func GenerateFileFromTemplate(templateFilePath string, projectBasePath string, d
 	if resultFileName == filepath.Ext(resultFileName) {
 		return nil, nil
 	}
+
+	// Convert Project Path
+	pathTemplate, err := textTemplate.New("path_template").Parse(destinationFileDirectory)
+	if err != nil {
+		fmt.Println(file)
+		error_handler.HandleError(err)
+		return nil, err
+	}
+	filePathBuffer := &bytes.Buffer{}
+	err = pathTemplate.Execute(filePathBuffer, data)
+	if err != nil {
+		error_handler.HandleError(err)
+		return nil, err
+	}
+	resultFilePath := filePathBuffer.String()
+
+	err = utilities.CreateDirectoryIfNotExists(resultFilePath)
+	if err != nil {
+		error_handler.HandleError(err)
+		return nil, err
+	}
+
+	// Generate Content
 	contentTemplate, err := textTemplate.ParseFiles(templateFilePath)
 	contentBuffer := &bytes.Buffer{}
-	fmt.Println("Generating file content from template: " + resultFileName)
 	err = contentTemplate.Execute(contentBuffer, data)
 	if err != nil {
 		error_handler.HandleError(err)
 		return nil, err
 	}
-	err = os.WriteFile(destinationFileDirectory+string(os.PathSeparator)+resultFileName, contentBuffer.Bytes(), 0644)
+	err = os.WriteFile(resultFilePath+string(os.PathSeparator)+resultFileName, contentBuffer.Bytes(), 0644)
 	if err != nil {
 		error_handler.HandleError(err)
 		return nil, err
@@ -48,7 +71,6 @@ func GenerateFileFromTemplate(templateFilePath string, projectBasePath string, d
 }
 
 func GenerateStringFromTemplate(templateFilePath string, data interface{}) (*string, error) {
-	fmt.Println("Generating string from template: " + templateFilePath)
 	contentTemplate, err := textTemplate.ParseFiles(templateFilePath)
 	if err != nil {
 		return nil, err
