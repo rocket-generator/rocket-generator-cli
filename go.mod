@@ -4,9 +4,11 @@ go 1.21
 
 require (
 	github.com/cavaliergopher/grab/v3 v3.0.1
+	github.com/duythinht/dbml-go v0.0.0-20220713090938-b5659a82f71b
 	github.com/fatih/color v1.15.0
 	github.com/getkin/kin-openapi v0.119.0
 	github.com/jinzhu/inflection v1.0.0
+	github.com/otiai10/copy v1.12.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 	github.com/stoewer/go-strcase v1.3.0
@@ -16,7 +18,6 @@ require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/dave/jennifer v1.4.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/duythinht/dbml-go v0.0.0-20220713090938-b5659a82f71b // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.0 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
@@ -32,7 +33,6 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/otiai10/copy v1.12.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

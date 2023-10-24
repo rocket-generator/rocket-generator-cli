@@ -26,6 +26,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 		entityObject := objects.Entity{
 			Name:               generateName(entityName),
 			PrimaryKeyDataType: "int64",
+			PrimaryKeyName:     "id",
 			HasDecimal:         false,
 			HasJSON:            false,
 			UseSoftDelete:      false,
@@ -70,14 +71,15 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			columnObject.APIReturnable = checkAPIReturnable(columnObject)
 			columnObject.APIUpdatable = checkAPIUpdatable(columnObject)
 			columnObject.APIType = getAPIType(columnObject)
-			if name == "id" {
+			if primary {
 				columnObject.IsCommonColumn = true
 			} else {
 				columnObject.IsCommonColumn = false
 			}
 			entityObject.Columns = append(entityObject.Columns, columnObject)
-			if name == "id" {
+			if primary {
 				entityObject.PrimaryKey = columnObject
+				entityObject.PrimaryKeyName = columnObject.Name.Original
 			}
 			if strings.HasPrefix(dataType, "decimal") || strings.HasPrefix(dataType, "numeric") {
 				entityObject.HasDecimal = true
@@ -128,12 +130,16 @@ func addToRef(
 		Entity:           rightTable,
 		Column:           rightTable.Columns[rightColumnIndex],
 		MultipleEntities: false,
+		ForeignKey:       generateName(fromColumnName),
+		OwnerKey:         generateName(toColumnName),
 	}
 	rightRelation := objects.Relation{
 		Name:             generateName(leftTable.Name.Original),
 		Entity:           leftTable,
 		Column:           leftTable.Columns[leftColumnIndex],
 		MultipleEntities: false,
+		ForeignKey:       generateName(toColumnName),
+		OwnerKey:         generateName(fromColumnName),
 	}
 
 	switch referenceType {

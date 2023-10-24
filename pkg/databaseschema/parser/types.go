@@ -8,6 +8,7 @@ import (
 func IsTypeInteger(dataType string) bool {
 	switch strings.ToLower(dataType) {
 	case "int":
+	case "tinyint":
 	case "integer":
 	case "bigint":
 	case "bigserial":
@@ -21,6 +22,7 @@ func IsTypeInteger(dataType string) bool {
 func IsTypeString(dataType string) bool {
 	switch strings.ToLower(dataType) {
 	case "text":
+	case "mediumtext":
 	case "string":
 	case "varchar":
 	case "char":
@@ -49,6 +51,7 @@ func GuessFakerType(tableName string, column *objects.Column) string {
 		"uuid":     "uuid",
 		"date":     "date",
 		"datetime": "dateTime",
+		"json":     "json",
 	}
 
 	columnName := column.Name.Default.Snake
@@ -59,20 +62,26 @@ func GuessFakerType(tableName string, column *objects.Column) string {
 		}
 	}
 
-	if IsTypeInteger(fakerTypeString) {
-		if strings.HasSuffix(columnName, "_at") {
-			return "unixTime"
-		}
-	}
-
-	if IsTypeString(fakerTypeString) {
-		return "word"
-	}
-
 	for key, value := range typeMap {
 		if column.DataType.Default.Snake == key {
 			return value
 		}
+	}
+
+	if IsTypeInteger(fakerTypeString) {
+		if strings.HasSuffix(columnName, "_at") {
+			return "unixTime"
+		} else {
+			return "randomDigit"
+		}
+	}
+
+	if strings.HasSuffix(columnName, "_uuid") {
+		return "uuid"
+	}
+
+	if IsTypeString(fakerTypeString) {
+		return "word"
 	}
 
 	return "word"

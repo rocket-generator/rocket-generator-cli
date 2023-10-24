@@ -148,6 +148,8 @@ func ParsePlantUML(filePath string, projectName string, organizationName string,
 				leftRelation.RelationType = "hasOne"
 			}
 		}
+		leftRelation.ForeignKey = generateName(leftRelation.Column.Name.Original)
+		leftRelation.OwnerKey = generateName(leftRelation.Column.Name.Original)
 		rightRelation := objects.Relation{
 			Name:             generateName(leftTable.Name.Original),
 			Entity:           leftTable,
@@ -167,6 +169,8 @@ func ParsePlantUML(filePath string, projectName string, organizationName string,
 				rightRelation.RelationType = "hasOne"
 			}
 		}
+		rightRelation.ForeignKey = generateName(rightRelation.Column.Name.Original)
+		rightRelation.OwnerKey = generateName(rightRelation.Column.Name.Original)
 		data.Entities[leftTableIndex].Relations = append(data.Entities[leftTableIndex].Relations, &leftRelation)
 		data.Entities[rightTableIndex].Relations = append(data.Entities[rightTableIndex].Relations, &rightRelation)
 	}

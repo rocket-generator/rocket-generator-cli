@@ -3,10 +3,11 @@ package objects
 // Entity ...
 type Entity struct {
 	Name               Name
-	PrimaryKeyDataType string
 	Columns            []*Column
 	Relations          []*Relation
 	PrimaryKey         *Column
+	PrimaryKeyName     string
+	PrimaryKeyDataType string
 	Description        string
 	HasDecimal         bool
 	HasJSON            bool
