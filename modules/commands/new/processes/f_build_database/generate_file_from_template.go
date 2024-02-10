@@ -1,7 +1,6 @@
 package f_build_database
 
 import (
-	"fmt"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
@@ -37,6 +36,5 @@ func (process *Process) generateFileFromTemplate(entity objects.Entity, payload 
 		}
 		return nil
 	})
-	fmt.Println("")
 	return err
 }

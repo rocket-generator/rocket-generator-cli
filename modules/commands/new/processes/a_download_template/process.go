@@ -66,12 +66,12 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	typeMapperFilePath := filepath.Join(projectPath, "templates", "data", "types.json")
 	typeMapper, err := data_mapper.Parse(typeMapperFilePath)
 	if err == nil {
-		red := color.New(color.FgGreen)
-		_, _ = red.Println("Type mapping file found at: " + typeMapperFilePath)
+		green := color.New(color.FgGreen)
+		_, _ = green.Println("Type mapping file found at: " + typeMapperFilePath)
 		payload.TypeMapper = typeMapper
 	} else {
-		red := color.New(color.FgYellow)
-		_, _ = red.Println("No type mapping file found at: " + typeMapperFilePath)
+		yellow := color.New(color.FgYellow)
+		_, _ = yellow.Println("No type mapping file found at: " + typeMapperFilePath)
 	}
 
 	return payload, nil
