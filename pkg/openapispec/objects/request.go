@@ -10,6 +10,7 @@ type Request struct {
 	PathName          Name
 	Description       string
 	AddParamsForTest  string
+	Services          []string
 	RequestSchemaName Name
 	RequestSchema     *Schema
 	Parameters        []*Parameter

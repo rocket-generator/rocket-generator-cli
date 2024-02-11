@@ -6,6 +6,7 @@ type Arguments struct {
 	Template         string
 	ApiFileName      string
 	DatabaseFileName string
+	ServiceFileName  string
 	OrganizationName string
 	Debug            bool
 	NoAdmin          bool

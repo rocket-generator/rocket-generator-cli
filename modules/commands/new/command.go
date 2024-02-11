@@ -7,6 +7,7 @@ import (
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/a_download_template"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_api_spec_file"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_service_definition_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/c_parse_database_spec_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/d_build_crossover_information"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/e_build_app_api"
@@ -25,6 +26,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		ProjectPath:      arguments.ProjectBasePath,
 		ApiFileName:      arguments.ApiFileName,
 		DatabaseFileName: arguments.DatabaseFileName,
+		ServiceFileName:  arguments.ServiceFileName,
 		OrganizationName: arguments.OrganizationName,
 		OpenAPISpec:      nil,
 		DatabaseSchema:   nil,
@@ -37,6 +39,7 @@ func (c *Command) Execute(arguments Arguments) error {
 	_processes := []processes.ProcessInterface{
 		&a_download_template.Process{},
 		&b_parse_api_spec_file.Process{},
+		&b_parse_service_definition_file.Process{},
 		&c_parse_database_spec_file.Process{},
 		&d_build_crossover_information.Process{},
 		&e_build_app_api.Process{},

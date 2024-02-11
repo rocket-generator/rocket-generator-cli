@@ -13,6 +13,7 @@ type Payload struct {
 	ProjectPath      string
 	ApiFileName      string
 	DatabaseFileName string
+	ServiceFileName  string
 	OrganizationName string
 	OpenAPISpec      *apiObjects.API
 	DatabaseSchema   *databaseObject.Schema

@@ -34,8 +34,6 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rocket-generator.yaml)")
 	rootCmd.PersistentFlags().BoolVar(&debugFlag, "debug", false, "debug option")
-
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func initConfig() {

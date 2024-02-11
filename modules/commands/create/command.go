@@ -1,4 +1,4 @@
-package add
+package create
 
 type Command struct {
 }

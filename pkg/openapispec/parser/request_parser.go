@@ -20,6 +20,7 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 				Description:      operation.Description,
 				RouteNameSpace:   data.RouteNameSpace,
 				OrganizationName: data.OrganizationName,
+				Services:         []string{},
 			}
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
