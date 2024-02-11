@@ -30,6 +30,8 @@ func (c *Command) Execute(arguments Arguments) error {
 		DatabaseSchema:   nil,
 		TypeMapper:       nil,
 		Count:            0,
+		Debug:            arguments.Debug,
+		HasAdminAPI:      !arguments.NoAdmin,
 	}
 
 	_processes := []processes.ProcessInterface{
@@ -39,7 +41,9 @@ func (c *Command) Execute(arguments Arguments) error {
 		&d_build_crossover_information.Process{},
 		&e_build_app_api.Process{},
 		&f_build_database.Process{},
-		&g_build_admin_api.Process{},
+	}
+	if !arguments.NoAdmin {
+		_processes = append(_processes, &g_build_admin_api.Process{})
 	}
 
 	for _, process := range _processes {

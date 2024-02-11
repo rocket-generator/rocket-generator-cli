@@ -15,6 +15,7 @@ var arguments = newCommand.Arguments{
 	DatabaseFileName: "",
 	OrganizationName: "",
 	Debug:            false,
+	NoAdmin:          false,
 }
 
 var newCmd = &cobra.Command{
@@ -51,5 +52,5 @@ func init() {
 	newCmd.Flags().StringVarP(&arguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
 	newCmd.Flags().StringVarP(&arguments.OrganizationName, "organization", "o", "your_org", "specify your (github) organization name")
 	newCmd.Flags().StringVarP(&arguments.ProjectBasePath, "path", "p", "", "path to create project")
-
+	newCmd.Flags().BoolVarP(&arguments.NoAdmin, "noadmin", "n", false, "no need admin")
 }

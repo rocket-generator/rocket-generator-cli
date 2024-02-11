@@ -8,4 +8,5 @@ type Arguments struct {
 	DatabaseFileName string
 	OrganizationName string
 	Debug            bool
+	NoAdmin          bool
 }

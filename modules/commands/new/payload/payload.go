@@ -19,4 +19,5 @@ type Payload struct {
 	TypeMapper       *data_mapper.Mapper
 	Count            int
 	Debug            bool
+	HasAdminAPI      bool
 }
