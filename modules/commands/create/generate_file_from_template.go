@@ -1,4 +1,4 @@
-package service
+package create
 
 import (
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 )
 
-func (c *Command) generateFileFromTemplate(payload *Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", "service")
+func (c *SubCommand) generateFileFromTemplate(payload *Payload) error {
+	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", payload.Type)
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}

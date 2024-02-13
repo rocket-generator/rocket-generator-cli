@@ -5,8 +5,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var createServiceArguments = createCommand.Arguments{
-	Type:              "service",
+var createDtoArguments = createCommand.Arguments{
+	Type:              "dto",
 	Name:              "",
 	RelatedModelNames: []string{},
 	RelatedResponse:   nil,
@@ -14,18 +14,18 @@ var createServiceArguments = createCommand.Arguments{
 	Debug:             false,
 }
 
-var createServiceCmd = &cobra.Command{
-	Use:   "service",
-	Short: "Create a new service",
+var createDtoCmd = &cobra.Command{
+	Use:   "dto",
+	Short: "Create a new dto",
 	Long: `Create a new resource on the project.:
 
-rocket create service your-service-name
+rocket create dto your-dto-name
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
-		createServiceArguments.Name = name
+		createDtoArguments.Name = name
 		command := createCommand.SubCommand{}
-		err := command.Execute(createServiceArguments)
+		err := command.Execute(createDtoArguments)
 		if err != nil {
 			panic(err)
 		}
@@ -33,6 +33,6 @@ rocket create service your-service-name
 }
 
 func init() {
-	createCmd.AddCommand(createServiceCmd)
-	createServiceCmd.Flags().StringVarP(&createServiceArguments.ProjectPath, "path", "p", "", "path to create project")
+	createCmd.AddCommand(createDtoCmd)
+	createDtoCmd.Flags().StringVarP(&createDtoArguments.ProjectPath, "path", "p", "", "path to create project")
 }

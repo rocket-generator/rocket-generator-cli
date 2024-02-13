@@ -10,5 +10,6 @@ type API struct {
 	BasePath         string
 	RouteNameSpace   string
 	Requests         []*Request
+	RequestGroups    *[]*RequestGroup
 	Schemas          map[string]*Schema
 }

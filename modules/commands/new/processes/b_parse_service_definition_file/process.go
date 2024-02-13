@@ -2,29 +2,27 @@ package b_parse_service_definition_file
 
 import (
 	"encoding/json"
-	createServiceCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/service"
+	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/stoewer/go-strcase"
 	"os"
+	"strings"
 )
 
 type Process struct {
 }
 
-// Service は各サービスを表す構造体です。
 type Service struct {
 	Name          string        `json:"name"`
 	APIEndpoints  []APIEndpoint `json:"api_endpoints"`
 	RelatedModels []string      `json:"related_models"`
 }
 
-// APIEndpoint はAPIのエンドポイントを表す構造体です。
 type APIEndpoint struct {
 	Path   string `json:"path"`
 	Method string `json:"method"`
 }
 
-// Services は複数のServiceを格納するためのスライスです。
 type Services []Service
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
@@ -40,13 +38,15 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	if services != nil {
 		setServiceToAPISpec(payload, services)
 		for _, service := range *services {
-			argument := createServiceCommand.Arguments{
-				ServiceName:       service.Name,
+			argument := createCommand.Arguments{
+				Type:              "service",
+				Name:              service.Name,
 				RelatedModelNames: service.RelatedModels,
+				RelatedResponse:   nil,
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,
 			}
-			command := createServiceCommand.Command{}
+			command := createCommand.SubCommand{}
 			err := command.Execute(argument)
 			if err != nil {
 				return nil, err
@@ -71,11 +71,13 @@ func loadServiceFile(filename string) (*Services, error) {
 
 	for index, service := range services {
 		name := strcase.LowerCamelCase(service.Name)
-		if len(name) > 7 && name[len(name)-7:] == "Service" {
-			services[index].Name = service.Name[:len(service.Name)-7]
+
+		if strings.HasSuffix(name, "Service") {
+			services[index].Name = strings.TrimSuffix(name, "Service")
 		} else {
 			services[index].Name = service.Name
 		}
+
 	}
 	return &services, nil
 }

@@ -12,11 +12,7 @@ import (
 	"strings"
 )
 
-type Entities struct {
-	Requests []*objects.Request
-}
-
-func (process *Process) generateEmbeddedPartFromTemplate(requests []*objects.Request, payload *newCommand.Payload) error {
+func (process *Process) generateEmbeddedPartFromTemplate(apiSpec *objects.API, payload *newCommand.Payload) error {
 	templatePath := filepath.Join(payload.ProjectPath, "templates", "app_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
@@ -47,9 +43,7 @@ func (process *Process) generateEmbeddedPartFromTemplate(requests []*objects.Req
 					ptmplExtension := filepath.Ext(partialTemplateFile.Name())
 					if ptmplExtension == ".ptmpl" && !partialTemplateFile.IsDir() {
 						partialTemplateFullPath := filepath.Join(path, partialTemplateFile.Name())
-						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, Entities{
-							Requests: requests,
-						})
+						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, apiSpec)
 						if err != nil {
 							return err
 						}

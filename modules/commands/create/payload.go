@@ -1,7 +1,8 @@
-package service
+package create
 
 import (
 	"github.com/jinzhu/inflection"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
 )
 
@@ -23,10 +24,12 @@ type NameForm struct {
 
 // Payload ...
 type Payload struct {
-	Name          Name
-	RelatedModels []Name
-	ProjectPath   string
-	Debug         bool
+	Type            string
+	Name            Name
+	RelatedModels   []Name
+	ProjectPath     string
+	RelatedResponse *objects.Response
+	Debug           bool
 }
 
 func generateName(name string) Name {

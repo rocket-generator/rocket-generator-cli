@@ -14,13 +14,19 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 	for path, pathItem := range paths {
 		for method, operation := range pathItem.Operations() {
 			request := objects.Request{
-				Path:             path,
-				Method:           objects.NewNameForm(strings.ToUpper(method)),
-				PathName:         generateName(getPathFormFromPath(path)),
-				Description:      operation.Description,
-				RouteNameSpace:   data.RouteNameSpace,
-				OrganizationName: data.OrganizationName,
-				Services:         []string{},
+				Path:              path,
+				GroupRelativePath: "",
+				Method:            objects.NewNameForm(strings.ToUpper(method)),
+				PathName:          generateName(getPathFormFromPath(path)),
+				Description:       operation.Description,
+				RouteNameSpace:    data.RouteNameSpace,
+				OrganizationName:  data.OrganizationName,
+				Services:          []string{},
+				RequireAuth:       false,
+				RequiredRoles:     []string{},
+				RequestType:       "",
+				TargetModel:       "",
+				HasStatusResponse: false,
 			}
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
@@ -73,6 +79,9 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 						request.Responses = append(request.Responses, response)
 						if success {
 							request.SuccessResponse = response
+							if response.Schema.Name.Singular.Snake == "status" {
+								request.HasStatusResponse = true
+							}
 						}
 					}
 				}

@@ -20,6 +20,7 @@ func Parse(filePath string, namespace string, projectName string, organizationNa
 		OrganizationName: organizationName,
 		Schemas:          map[string]*objects.Schema{},
 		RouteNameSpace:   defaultRouteNamespace,
+		RequestGroups:    nil,
 	}
 	openApiData, err := openapi3.NewLoader().LoadFromFile(filePath)
 	if err != nil {

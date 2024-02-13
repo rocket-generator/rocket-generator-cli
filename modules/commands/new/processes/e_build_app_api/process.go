@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
+	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 )
 
@@ -21,8 +22,24 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		if err := process.generateFileFromTemplate(*request, payload); err != nil {
 			return nil, err
 		}
+		if !request.HasStatusResponse && !request.SuccessResponse.IsList {
+			// Require DTO
+			argument := createCommand.Arguments{
+				Type:              "dto",
+				Name:              request.SuccessResponse.Schema.Name.Default.Title,
+				RelatedModelNames: []string{request.TargetModel},
+				RelatedResponse:   request.SuccessResponse,
+				ProjectPath:       payload.ProjectPath,
+				Debug:             payload.Debug,
+			}
+			command := createCommand.SubCommand{}
+			err := command.Execute(argument)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
-	err := process.generateEmbeddedPartFromTemplate(payload.OpenAPISpec.Requests, payload)
+	err := process.generateEmbeddedPartFromTemplate(payload.OpenAPISpec, payload)
 	if err != nil {
 		return nil, err
 	}

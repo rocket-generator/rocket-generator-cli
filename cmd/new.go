@@ -12,6 +12,7 @@ var newArguments = newCommand.Arguments{
 	ProjectBasePath:  "",
 	Template:         "",
 	ApiFileName:      "",
+	ApiInfoFileName:  "",
 	DatabaseFileName: "",
 	ServiceFileName:  "",
 	OrganizationName: "",
@@ -51,6 +52,7 @@ func init() {
 	newCmd.Flags().StringVarP(&newArguments.Template, "template", "t", "go-gin", "specify template to use")
 	newCmd.Flags().StringVarP(&newArguments.ApiFileName, "api", "a", "api.yaml", "specify OpenAPI Spec Yaml file")
 	newCmd.Flags().StringVarP(&newArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
+	newCmd.Flags().StringVarP(&newArguments.ApiInfoFileName, "api_info", "i", "", "specify api info json file")
 	newCmd.Flags().StringVarP(&newArguments.ServiceFileName, "service", "s", "", "specify service path mapping json file")
 	newCmd.Flags().StringVarP(&newArguments.OrganizationName, "organization", "o", "your_org", "specify your (github) organization name")
 	newCmd.Flags().StringVarP(&newArguments.ProjectBasePath, "path", "p", "", "path to create project")

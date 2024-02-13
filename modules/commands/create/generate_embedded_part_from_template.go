@@ -1,4 +1,4 @@
-package service
+package create
 
 import (
 	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
@@ -15,8 +15,8 @@ type Entities struct {
 	Requests []*objects.Request
 }
 
-func (c *Command) generateEmbeddedPartFromTemplate(payload *Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", "service")
+func (c *SubCommand) generateEmbeddedPartFromTemplate(payload *Payload) error {
+	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", payload.Type)
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
