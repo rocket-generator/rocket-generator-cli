@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-type Mapper map[string]string
+type MapperElement map[string]string
+type Mapper map[string]MapperElement
 
 // Parse ...
 func Parse(filePath string) (*Mapper, error) {
@@ -30,13 +31,17 @@ func Parse(filePath string) (*Mapper, error) {
 	return &mapper, nil
 }
 
-func MapString(mapper *Mapper, value string) string {
+func MapString(mapper *Mapper, category string, value string) string {
 	if mapper == nil {
 		return value
 	}
-	lowerCaseValue := strings.ToLower(value)
-	if mappedValue, ok := (*mapper)[lowerCaseValue]; ok {
-		return mappedValue
+	lowerCaseCategory := strings.ToLower(category)
+	if mapElement, ok := (*mapper)[lowerCaseCategory]; ok {
+		lowerCaseValue := strings.ToLower(value)
+		if mappedValue, ok := mapElement[lowerCaseValue]; ok {
+			return mappedValue
+		}
 	}
+
 	return value
 }

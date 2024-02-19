@@ -40,7 +40,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 		for _, column := range entity.Columns {
 			primary := false
 			nullable := true
-			name := strings.ToLower(column.Name)
+			name := column.Name
 			dataType, dataSize := convertDataTypeToDataTypeAndSize(strings.ToLower(column.Type))
 			defaultValue := column.Settings.Default
 			if name == "created_at" || name == "updated_at" {
@@ -62,7 +62,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 				Name:         generateName(name),
 				DataType:     generateName(dataType),
 				DataSize:     dataSize,
-				ObjectType:   data_mapper.MapString(typeMapper, dataType),
+				ObjectType:   data_mapper.MapString(typeMapper, "database", dataType),
 				Primary:      primary,
 				Nullable:     nullable,
 				DefaultValue: defaultValue,
