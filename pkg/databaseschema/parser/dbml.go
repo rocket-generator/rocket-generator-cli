@@ -32,8 +32,8 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			UseSoftDelete:      false,
 			DateTime:           time.Now().Format("20060201150405"),
 			Year:               time.Now().Format("2006"),
-			Month:              time.Now().Format("02"),
-			Day:                time.Now().Format("01"),
+			Month:              time.Now().Format("01"),
+			Day:                time.Now().Format("02"),
 			Time:               time.Now().Format("150405"),
 			OrganizationName:   organizationName,
 		}

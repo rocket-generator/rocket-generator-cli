@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
-	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
+	createDtoCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/dto"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 )
 
@@ -24,7 +24,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		}
 		if !request.HasStatusResponse && !request.SuccessResponse.IsList {
 			// Require DTO
-			argument := createCommand.Arguments{
+			argument := createDtoCommand.Arguments{
 				Type:              "dto",
 				Name:              request.SuccessResponse.Schema.Name.Default.Title,
 				RelatedModelNames: []string{request.TargetModel},
@@ -32,7 +32,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,
 			}
-			command := createCommand.SubCommand{}
+			command := createDtoCommand.Command{}
 			err := command.Execute(argument)
 			if err != nil {
 				return nil, err

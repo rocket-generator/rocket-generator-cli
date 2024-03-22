@@ -2,7 +2,8 @@ package b_parse_service_definition_file
 
 import (
 	"encoding/json"
-	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
+	"fmt"
+	createServiceCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/service"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/stoewer/go-strcase"
 	"os"
@@ -38,7 +39,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	if services != nil {
 		setServiceToAPISpec(payload, services)
 		for _, service := range *services {
-			argument := createCommand.Arguments{
+			argument := createServiceCommand.Arguments{
 				Type:              "service",
 				Name:              service.Name,
 				RelatedModelNames: service.RelatedModels,
@@ -46,12 +47,13 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,
 			}
-			command := createCommand.SubCommand{}
+			command := createServiceCommand.Command{}
 			err := command.Execute(argument)
 			if err != nil {
 				return nil, err
 			}
 		}
+		fmt.Println("3")
 	}
 	return payload, nil
 }

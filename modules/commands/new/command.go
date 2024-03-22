@@ -52,7 +52,8 @@ func (c *Command) Execute(arguments Arguments) error {
 		_processes = append(_processes, &g_build_admin_api.Process{})
 	}
 
-	for _, process := range _processes {
+	for index, process := range _processes {
+		fmt.Println("Running process", index+1, "of", len(_processes))
 		_payload, err := process.Execute(_payload)
 		if err != nil {
 			red := color.New(color.FgRed)

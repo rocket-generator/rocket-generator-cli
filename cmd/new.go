@@ -48,7 +48,7 @@ rocket new your-service-name --template go-gin
 }
 
 func init() {
-	rootCmd.AddCommand(newCmd)
+	RootCmd.AddCommand(newCmd)
 	newCmd.Flags().StringVarP(&newArguments.Template, "template", "t", "go-gin", "specify template to use")
 	newCmd.Flags().StringVarP(&newArguments.ApiFileName, "api", "a", "api.yaml", "specify OpenAPI Spec Yaml file")
 	newCmd.Flags().StringVarP(&newArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")

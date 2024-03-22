@@ -1,10 +1,11 @@
-package cmd
+package create
 
 import (
+	"github.com/rocket-generator/rocket-generator-cli/cmd"
 	"github.com/spf13/cobra"
 )
 
-var createCmd = &cobra.Command{
+var Cmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create new resource",
 	Long: `Create new resource on the project. Such as service, package, etc.:
@@ -14,5 +15,5 @@ rocket create service your-service-name
 }
 
 func init() {
-	rootCmd.AddCommand(createCmd)
+	cmd.RootCmd.AddCommand(Cmd)
 }

@@ -1,11 +1,11 @@
-package cmd
+package create
 
 import (
-	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
+	command "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/dto"
 	"github.com/spf13/cobra"
 )
 
-var createDtoArguments = createCommand.Arguments{
+var createDtoArguments = command.Arguments{
 	Type:              "dto",
 	Name:              "",
 	RelatedModelNames: []string{},
@@ -24,7 +24,7 @@ rocket create dto your-dto-name
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		createDtoArguments.Name = name
-		command := createCommand.SubCommand{}
+		command := command.Command{}
 		err := command.Execute(createDtoArguments)
 		if err != nil {
 			panic(err)
@@ -33,6 +33,6 @@ rocket create dto your-dto-name
 }
 
 func init() {
-	createCmd.AddCommand(createDtoCmd)
+	Cmd.AddCommand(createDtoCmd)
 	createDtoCmd.Flags().StringVarP(&createDtoArguments.ProjectPath, "path", "p", "", "path to create project")
 }

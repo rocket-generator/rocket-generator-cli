@@ -1,6 +1,7 @@
 package create
 
 import (
+	"fmt"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
@@ -8,8 +9,10 @@ import (
 	"path/filepath"
 )
 
-func (c *SubCommand) generateFileFromTemplate(payload *Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", payload.Type)
+func GenerateFileFromTemplate(projectPath string, targetType string, payload interface{}) error {
+	templatePath := filepath.Join(projectPath, "templates", "create", targetType)
+	fmt.Println(projectPath)
+	fmt.Println(templatePath)
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
@@ -25,8 +28,8 @@ func (c *SubCommand) generateFileFromTemplate(payload *Payload) error {
 				error_handler.HandleError(err)
 				return err
 			}
-			resultDirectory := filepath.Join(payload.ProjectPath, relativePath)
-			_, err = template.GenerateFileFromTemplate(path, payload.ProjectPath, resultDirectory, payload)
+			resultDirectory := filepath.Join(projectPath, relativePath)
+			_, err = template.GenerateFileFromTemplate(path, projectPath, resultDirectory, payload)
 			if err != nil {
 				error_handler.HandleError(err)
 				return err

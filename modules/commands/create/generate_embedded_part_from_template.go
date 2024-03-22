@@ -15,8 +15,8 @@ type Entities struct {
 	Requests []*objects.Request
 }
 
-func (c *SubCommand) generateEmbeddedPartFromTemplate(payload *Payload) error {
-	templatePath := filepath.Join(payload.ProjectPath, "templates", "create", payload.Type)
+func GenerateEmbeddedPartFromTemplate(projectPath string, targetType string, payload interface{}) error {
+	templatePath := filepath.Join(projectPath, "templates", "create", targetType)
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (c *SubCommand) generateEmbeddedPartFromTemplate(payload *Payload) error {
 			if err != nil {
 				return err
 			}
-			targetFile := filepath.Join(payload.ProjectPath, relativePath)
+			targetFile := filepath.Join(projectPath, relativePath)
 			if _, err := os.Stat(targetFile); err == nil {
 				files, err := os.ReadDir(path)
 				if err != nil {
@@ -46,7 +46,7 @@ func (c *SubCommand) generateEmbeddedPartFromTemplate(payload *Payload) error {
 					ptmplExtension := filepath.Ext(partialTemplateFile.Name())
 					if ptmplExtension == ".ptmpl" && !partialTemplateFile.IsDir() {
 						partialTemplateFullPath := filepath.Join(path, partialTemplateFile.Name())
-						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, *payload)
+						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, payload)
 						if err != nil {
 							return err
 						}

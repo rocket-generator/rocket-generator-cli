@@ -1,11 +1,11 @@
-package cmd
+package create
 
 import (
-	createCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
+	command "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/service"
 	"github.com/spf13/cobra"
 )
 
-var createServiceArguments = createCommand.Arguments{
+var createServiceArguments = command.Arguments{
 	Type:              "service",
 	Name:              "",
 	RelatedModelNames: []string{},
@@ -24,7 +24,7 @@ rocket create service your-service-name
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 		createServiceArguments.Name = name
-		command := createCommand.SubCommand{}
+		command := command.Command{}
 		err := command.Execute(createServiceArguments)
 		if err != nil {
 			panic(err)
@@ -33,6 +33,6 @@ rocket create service your-service-name
 }
 
 func init() {
-	createCmd.AddCommand(createServiceCmd)
+	Cmd.AddCommand(createServiceCmd)
 	createServiceCmd.Flags().StringVarP(&createServiceArguments.ProjectPath, "path", "p", "", "path to create project")
 }

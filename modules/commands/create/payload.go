@@ -2,7 +2,6 @@ package create
 
 import (
 	"github.com/jinzhu/inflection"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
 )
 
@@ -22,17 +21,7 @@ type NameForm struct {
 	Kebab string
 }
 
-// Payload ...
-type Payload struct {
-	Type            string
-	Name            Name
-	RelatedModels   []Name
-	ProjectPath     string
-	RelatedResponse *objects.Response
-	Debug           bool
-}
-
-func generateName(name string) Name {
+func GenerateName(name string) Name {
 	singular := inflection.Singular(name)
 	plural := inflection.Plural(name)
 	return Name{
