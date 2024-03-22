@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
+	createModelCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/model"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 )
 
@@ -16,16 +17,23 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		_, _ = green.Println("* Generate files from db table: " + entity.Name.Original)
 		if payload.Debug {
 			_byte, _ := json.MarshalIndent(entity, "", "    ")
-			// _byte, _ := json.Marshal(request)
 			fmt.Println(string(_byte))
 		}
-		if err := process.generateFileFromTemplate(*entity, payload); err != nil {
+
+		argument := createModelCommand.Arguments{
+			Type:           "model",
+			ProjectPath:    payload.ProjectPath,
+			Name:           entity.Name.Original,
+			DatabaseSchema: payload.DatabaseSchema,
+			Entity:         entity,
+			TypeMapper:     payload.TypeMapper,
+			Debug:          payload.Debug,
+		}
+		command := createModelCommand.Command{}
+		err := command.Execute(argument)
+		if err != nil {
 			return nil, err
 		}
-	}
-	err := process.generateEmbeddedPartFromTemplate(payload.DatabaseSchema.Entities, payload)
-	if err != nil {
-		return nil, err
 	}
 	return payload, nil
 }

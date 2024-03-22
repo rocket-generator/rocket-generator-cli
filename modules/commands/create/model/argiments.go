@@ -11,6 +11,7 @@ type Arguments struct {
 	DatabaseFileName string
 	ProjectPath      string
 	DatabaseSchema   *databaseObject.Schema
+	Entity           *databaseObject.Entity
 	TypeMapper       *data_mapper.Mapper
 	Debug            bool
 }

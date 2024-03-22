@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/parser"
@@ -46,11 +47,24 @@ func (c *Command) Execute(arguments Arguments) error {
 		Debug:          arguments.Debug,
 	}
 
-	err = create.GenerateFileFromTemplate(payload.ProjectPath, payload.Type, payload)
+	payload.Entity = arguments.Entity
+	if payload.Entity == nil {
+		for _, entity := range payload.DatabaseSchema.Entities {
+			if entity.Name.Original == arguments.Name {
+				payload.Entity = entity
+				break
+			}
+		}
+	}
+	if payload.Entity == nil {
+		return errors.New("entity not found: " + arguments.Name)
+	}
+
+	err = create.GenerateFileFromTemplate(payload.ProjectPath, payload.Type, payload.Entity)
 	if err != nil {
 		return err
 	}
-	err = create.GenerateEmbeddedPartFromTemplate(payload.ProjectPath, payload.Type, payload)
+	err = create.GenerateEmbeddedPartFromTemplate(payload.ProjectPath, payload.Type, payload.Entity)
 	if err != nil {
 		return err
 	}

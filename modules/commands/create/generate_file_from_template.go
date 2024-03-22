@@ -1,7 +1,6 @@
 package create
 
 import (
-	"fmt"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
@@ -11,8 +10,6 @@ import (
 
 func GenerateFileFromTemplate(projectPath string, targetType string, payload interface{}) error {
 	templatePath := filepath.Join(projectPath, "templates", "create", targetType)
-	fmt.Println(projectPath)
-	fmt.Println(templatePath)
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
 	}

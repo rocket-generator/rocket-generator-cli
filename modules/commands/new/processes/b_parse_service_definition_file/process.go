@@ -2,7 +2,6 @@ package b_parse_service_definition_file
 
 import (
 	"encoding/json"
-	"fmt"
 	createServiceCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/service"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/stoewer/go-strcase"
@@ -53,7 +52,6 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 				return nil, err
 			}
 		}
-		fmt.Println("3")
 	}
 	return payload, nil
 }
