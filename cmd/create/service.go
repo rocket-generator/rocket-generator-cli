@@ -14,7 +14,7 @@ var createServiceArguments = command.Arguments{
 	Debug:             false,
 }
 
-var createServiceCmd = &cobra.Command{
+var ServiceCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Create a new service",
 	Long: `Create a new resource on the project.:
@@ -33,6 +33,5 @@ rocket create service your-service-name
 }
 
 func init() {
-	Cmd.AddCommand(createServiceCmd)
-	createServiceCmd.Flags().StringVarP(&createServiceArguments.ProjectPath, "path", "p", "", "path to create project")
+	ServiceCmd.Flags().StringVarP(&createServiceArguments.ProjectPath, "path", "p", "", "path to create project")
 }

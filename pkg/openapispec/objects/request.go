@@ -20,6 +20,7 @@ type Request struct {
 	Responses         []*Response
 	SuccessResponse   *Response
 	RequestType       string
+	RequestSubType    string
 	TargetModel       string
 	HasStatusResponse bool
 }

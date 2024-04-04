@@ -14,7 +14,7 @@ var createDtoArguments = command.Arguments{
 	Debug:             false,
 }
 
-var createDtoCmd = &cobra.Command{
+var DtoCmd = &cobra.Command{
 	Use:   "dto",
 	Short: "Create a new dto",
 	Long: `Create a new resource on the project.:
@@ -33,6 +33,5 @@ rocket create dto your-dto-name
 }
 
 func init() {
-	Cmd.AddCommand(createDtoCmd)
-	createDtoCmd.Flags().StringVarP(&createDtoArguments.ProjectPath, "path", "p", "", "path to create project")
+	DtoCmd.Flags().StringVarP(&createDtoArguments.ProjectPath, "path", "p", "", "path to create project")
 }

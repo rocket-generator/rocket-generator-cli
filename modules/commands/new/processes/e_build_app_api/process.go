@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/fatih/color"
+	createApiCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/api"
 	createDtoCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/dto"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 )
@@ -19,12 +20,26 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 			_byte, _ := json.MarshalIndent(request, "", "    ")
 			fmt.Println(string(_byte))
 		}
-		if err := process.generateFileFromTemplate(*request, payload); err != nil {
+		apiArgument := createApiCommand.Arguments{
+			Type:            "api",
+			ProjectPath:     payload.ProjectPath,
+			Method:          request.Method.Original,
+			Path:            request.Path,
+			TypeMapper:      payload.TypeMapper,
+			ApiSpec:         payload.OpenAPISpec,
+			ApiFileName:     payload.ApiFileName,
+			ApiInfoFileName: payload.ApiInfoFileName,
+			Request:         request,
+			Debug:           payload.Debug,
+		}
+		apiCommand := createApiCommand.Command{}
+		err := apiCommand.Execute(apiArgument)
+		if err != nil {
 			return nil, err
 		}
 		if !request.HasStatusResponse && !request.SuccessResponse.IsList {
 			// Require DTO
-			argument := createDtoCommand.Arguments{
+			dtoArgument := createDtoCommand.Arguments{
 				Type:              "dto",
 				Name:              request.SuccessResponse.Schema.Name.Default.Title,
 				RelatedModelNames: []string{request.TargetModel},
@@ -32,16 +47,12 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,
 			}
-			command := createDtoCommand.Command{}
-			err := command.Execute(argument)
+			dtoCommand := createDtoCommand.Command{}
+			err := dtoCommand.Execute(dtoArgument)
 			if err != nil {
 				return nil, err
 			}
 		}
-	}
-	err := process.generateEmbeddedPartFromTemplate(payload.OpenAPISpec, payload)
-	if err != nil {
-		return nil, err
 	}
 	return payload, nil
 }

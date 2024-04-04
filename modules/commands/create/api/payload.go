@@ -5,10 +5,10 @@ import "github.com/rocket-generator/rocket-generator-cli/modules/commands/create
 
 // Payload ...
 type Payload struct {
-	Type            string
-	Name            create.Name
-	RelatedModels   []create.Name
-	ProjectPath     string
-	RelatedResponse *objects.Response
-	Debug           bool
+	Type        string
+	Name        create.Name
+	ProjectPath string
+	Request     *objects.Request
+	ApiSpec     *objects.API
+	Debug       bool
 }

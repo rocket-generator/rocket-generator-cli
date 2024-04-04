@@ -13,7 +13,7 @@ var createModelArguments = command.Arguments{
 	Debug:            false,
 }
 
-var createModelCmd = &cobra.Command{
+var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Create a new model and related files",
 	Long: `Create a new model on the project.:
@@ -32,7 +32,6 @@ rocket create model your-model-name
 }
 
 func init() {
-	Cmd.AddCommand(createModelCmd)
-	createModelCmd.Flags().StringVarP(&createModelArguments.ProjectPath, "path", "p", "", "path to create project")
-	createModelCmd.Flags().StringVarP(&createModelArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
+	ModelCmd.Flags().StringVarP(&createModelArguments.ProjectPath, "path", "p", "", "path to create project")
+	ModelCmd.Flags().StringVarP(&createModelArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
 }

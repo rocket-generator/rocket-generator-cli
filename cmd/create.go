@@ -1,7 +1,7 @@
-package create
+package cmd
 
 import (
-	"github.com/rocket-generator/rocket-generator-cli/cmd"
+	"github.com/rocket-generator/rocket-generator-cli/cmd/create"
 	"github.com/spf13/cobra"
 )
 
@@ -15,5 +15,9 @@ rocket create service your-service-name
 }
 
 func init() {
-	cmd.RootCmd.AddCommand(Cmd)
+	RootCmd.AddCommand(Cmd)
+	Cmd.AddCommand(create.ApiCmd)
+	Cmd.AddCommand(create.ModelCmd)
+	Cmd.AddCommand(create.DtoCmd)
+	Cmd.AddCommand(create.ServiceCmd)
 }

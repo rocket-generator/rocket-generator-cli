@@ -42,6 +42,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		Type:           arguments.Type,
 		Name:           create.GenerateName(utilities.RemovePostfix(arguments.Name, strcase.UpperCamelCase(arguments.Type))),
 		DatabaseSchema: schema,
+		Entity:         arguments.Entity,
 		TypeMapper:     typeMapper,
 		ProjectPath:    arguments.ProjectPath,
 		Debug:          arguments.Debug,
