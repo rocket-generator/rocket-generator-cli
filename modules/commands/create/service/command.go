@@ -15,6 +15,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		Type:            arguments.Type,
 		Name:            create.GenerateName(utilities.RemovePostfix(arguments.Name, strcase.UpperCamelCase(arguments.Type))),
 		RelatedModels:   []create.Name{},
+		IsAuthService:   arguments.IsAuthService,
 		RelatedResponse: arguments.RelatedResponse,
 		ProjectPath:     arguments.ProjectPath,
 		Debug:           arguments.Debug,

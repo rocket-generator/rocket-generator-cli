@@ -42,7 +42,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 			dtoArgument := createDtoCommand.Arguments{
 				Type:              "dto",
 				Name:              request.SuccessResponse.Schema.Name.Default.Title,
-				RelatedModelNames: []string{request.TargetModel},
+				RelatedModelNames: nil,
 				RelatedResponse:   request.SuccessResponse,
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,

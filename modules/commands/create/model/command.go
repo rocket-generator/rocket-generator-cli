@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"fmt"
 	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/parser"
@@ -16,6 +17,7 @@ type Command struct {
 
 func (c *Command) Execute(arguments Arguments) error {
 	var err error
+	fmt.Println("----0")
 	typeMapper := arguments.TypeMapper
 	if typeMapper == nil {
 		typeMapperFilePath := filepath.Join(arguments.ProjectPath, "templates", "data", "types.json")
@@ -65,6 +67,7 @@ func (c *Command) Execute(arguments Arguments) error {
 	if err != nil {
 		return err
 	}
+
 	err = create.GenerateEmbeddedPartFromTemplate(payload.ProjectPath, payload.Type, payload.Entity)
 	if err != nil {
 		return err

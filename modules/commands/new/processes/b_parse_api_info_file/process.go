@@ -2,6 +2,7 @@ package b_parse_api_info_file
 
 import (
 	"encoding/json"
+	"github.com/jinzhu/inflection"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
@@ -16,6 +17,7 @@ type API struct {
 	Path          string   `json:"path"`
 	Method        string   `json:"method"`
 	Type          string   `json:"type"`
+	SubType       string   `json:"subType"`
 	Group         string   `json:"group"`
 	RequireAuth   bool     `json:"requireAuth"`
 	RequiredRoles []string `json:"requiredRoles"`
@@ -63,8 +65,12 @@ func updateAPISpec(payload *newCommand.Payload, apis *APIs) {
 		method := strcase.LowerCamelCase(api.Method)
 		for index, request := range payload.OpenAPISpec.Requests {
 			if request.Path == api.Path && request.Method.Snake == method {
-				payload.OpenAPISpec.Requests[index].RequestType = api.Type
-				payload.OpenAPISpec.Requests[index].TargetModel = api.TargetModel
+				payload.OpenAPISpec.Requests[index].RequestType = strcase.LowerCamelCase(api.Type)
+				payload.OpenAPISpec.Requests[index].RequestSubType = strcase.LowerCamelCase(api.SubType)
+				if api.TargetModel != "" {
+					apiTargetModelName := generateName(api.TargetModel)
+					payload.OpenAPISpec.Requests[index].TargetModel = &apiTargetModelName
+				}
 				payload.OpenAPISpec.Requests[index].RequireAuth = api.RequireAuth
 				payload.OpenAPISpec.Requests[index].RequiredRoles = api.RequiredRoles
 				payload.OpenAPISpec.Requests[index].GroupRelativePath = generateGroupRelativePath(api.Group, request.Path)
@@ -104,4 +110,30 @@ func generateGroupRelativePath(groupName string, path string) string {
 	}
 
 	return copiedPath
+}
+
+func generateName(name string) objects.Name {
+	singular := inflection.Singular(name)
+	plural := inflection.Plural(name)
+	return objects.Name{
+		Original: name,
+		Default: objects.NameForm{
+			Camel: strcase.LowerCamelCase(name),
+			Title: strcase.UpperCamelCase(name),
+			Snake: strcase.SnakeCase(name),
+			Kebab: strcase.KebabCase(name),
+		},
+		Singular: objects.NameForm{
+			Camel: strcase.LowerCamelCase(singular),
+			Title: strcase.UpperCamelCase(singular),
+			Snake: strcase.SnakeCase(singular),
+			Kebab: strcase.KebabCase(singular),
+		},
+		Plural: objects.NameForm{
+			Camel: strcase.LowerCamelCase(plural),
+			Title: strcase.UpperCamelCase(plural),
+			Snake: strcase.SnakeCase(plural),
+			Kebab: strcase.KebabCase(plural),
+		},
+	}
 }

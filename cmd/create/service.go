@@ -11,6 +11,7 @@ var createServiceArguments = command.Arguments{
 	RelatedModelNames: []string{},
 	RelatedResponse:   nil,
 	ProjectPath:       "",
+	IsAuthService:     false,
 	Debug:             false,
 }
 

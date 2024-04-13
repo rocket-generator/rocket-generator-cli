@@ -8,6 +8,7 @@ type Payload struct {
 	Type            string
 	Name            create.Name
 	RelatedModels   []create.Name
+	IsAuthService   bool
 	ProjectPath     string
 	RelatedResponse *objects.Response
 	Debug           bool

@@ -15,6 +15,7 @@ type Process struct {
 type Service struct {
 	Name          string        `json:"name"`
 	APIEndpoints  []APIEndpoint `json:"api_endpoints"`
+	IsAuthService bool          `json:"is_auth_service"`
 	RelatedModels []string      `json:"related_models"`
 }
 
@@ -43,6 +44,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 				Name:              service.Name,
 				RelatedModelNames: service.RelatedModels,
 				RelatedResponse:   nil,
+				IsAuthService:     service.IsAuthService,
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,
 			}

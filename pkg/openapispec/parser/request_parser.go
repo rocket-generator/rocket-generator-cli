@@ -26,7 +26,7 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 				RequiredRoles:     []string{},
 				RequestType:       "",
 				RequestSubType:    "",
-				TargetModel:       "",
+				TargetModel:       nil,
 				HasStatusResponse: false,
 			}
 			// Parameters

@@ -6,5 +6,6 @@ type Parameter struct {
 	In         string
 	Type       string
 	ObjectType string
+	CodeType   string
 	Required   bool
 }

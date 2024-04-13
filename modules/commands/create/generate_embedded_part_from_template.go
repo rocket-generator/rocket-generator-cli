@@ -56,6 +56,10 @@ func GenerateEmbeddedPartFromTemplate(projectPath string, targetType string, pay
 						}
 						replacedText := utilities.GetFilenameWithoutExtension(partialTemplateFile.Name())
 						placeHolder := "/* [" + replacedText + "] */"
+						// If replacement ends with new line, trim it
+						if strings.HasSuffix(*replacement, "\n") {
+							*replacement = (*replacement)[:len(*replacement)-1]
+						}
 						finalReplacement := *replacement + "\n" + placeHolder
 						updatedText := strings.ReplaceAll(string(originalContent), placeHolder, finalReplacement)
 

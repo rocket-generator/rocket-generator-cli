@@ -41,6 +41,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 				Name:          generateName(name),
 				Type:          property.Value.Type,
 				ObjectType:    data_mapper.MapString(typeMapper, "database", property.Value.Type),
+				CodeType:      data_mapper.MapString(typeMapper, "code", property.Value.Type),
 				Description:   property.Value.Description,
 				ArrayItemType: item.Type,
 				ArrayItemName: itemName,
@@ -52,6 +53,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 				Name:        generateName(name),
 				Type:        property.Value.Type,
 				ObjectType:  data_mapper.MapString(typeMapper, "database", property.Value.Type),
+				CodeType:    data_mapper.MapString(typeMapper, "code", property.Value.Type),
 				Description: property.Value.Description,
 				Reference:   propertyName,
 				Required:    required,
@@ -61,6 +63,7 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 				Name:        generateName(name),
 				Type:        property.Value.Type,
 				ObjectType:  data_mapper.MapString(typeMapper, "database", property.Value.Type),
+				CodeType:    data_mapper.MapString(typeMapper, "code", property.Value.Type),
 				Description: property.Value.Description,
 				Required:    required,
 			})

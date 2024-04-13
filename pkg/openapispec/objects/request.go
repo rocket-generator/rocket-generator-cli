@@ -21,6 +21,6 @@ type Request struct {
 	SuccessResponse   *Response
 	RequestType       string
 	RequestSubType    string
-	TargetModel       string
+	TargetModel       *Name
 	HasStatusResponse bool
 }

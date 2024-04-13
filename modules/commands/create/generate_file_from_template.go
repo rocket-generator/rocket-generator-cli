@@ -26,6 +26,9 @@ func GenerateFileFromTemplate(projectPath string, targetType string, payload int
 				return err
 			}
 			resultDirectory := filepath.Join(projectPath, relativePath)
+			//			fmt.Println("Generating file from template: " + path)/
+			//			p, err := json.MarshalIndent(payload, "", "  ")
+			//          fmt.Println(string(p))
 			_, err = template.GenerateFileFromTemplate(path, projectPath, resultDirectory, payload)
 			if err != nil {
 				error_handler.HandleError(err)

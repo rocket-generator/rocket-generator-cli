@@ -9,6 +9,7 @@ type Arguments struct {
 	Name              string
 	RelatedModelNames []string
 	RelatedResponse   *objects.Response
+	IsAuthService     bool
 	ProjectPath       string
 	Debug             bool
 }
