@@ -21,13 +21,14 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		}
 
 		argument := createModelCommand.Arguments{
-			Type:           "model",
-			ProjectPath:    payload.ProjectPath,
-			Name:           entity.Name.Original,
-			DatabaseSchema: payload.DatabaseSchema,
-			Entity:         entity,
-			TypeMapper:     payload.TypeMapper,
-			Debug:          payload.Debug,
+			Type:            "model",
+			ProjectPath:     payload.ProjectPath,
+			Name:            entity.Name.Original,
+			DatabaseSchema:  payload.DatabaseSchema,
+			Entity:          entity,
+			TypeMapper:      payload.TypeMapper,
+			Debug:           payload.Debug,
+			Authenticatable: entity.Authenticatable,
 		}
 		command := createModelCommand.Command{}
 		err := command.Execute(argument)

@@ -41,13 +41,14 @@ func (c *Command) Execute(arguments Arguments) error {
 	}
 
 	payload := Payload{
-		Type:           arguments.Type,
-		Name:           create.GenerateName(utilities.RemovePostfix(arguments.Name, strcase.UpperCamelCase(arguments.Type))),
-		DatabaseSchema: schema,
-		Entity:         arguments.Entity,
-		TypeMapper:     typeMapper,
-		ProjectPath:    arguments.ProjectPath,
-		Debug:          arguments.Debug,
+		Type:            arguments.Type,
+		Name:            create.GenerateName(utilities.RemovePostfix(arguments.Name, strcase.UpperCamelCase(arguments.Type))),
+		DatabaseSchema:  schema,
+		Entity:          arguments.Entity,
+		TypeMapper:      typeMapper,
+		ProjectPath:     arguments.ProjectPath,
+		Debug:           arguments.Debug,
+		Authenticatable: arguments.Authenticatable,
 	}
 
 	payload.Entity = arguments.Entity

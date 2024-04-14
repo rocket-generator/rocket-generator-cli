@@ -14,9 +14,9 @@ type Process struct {
 
 type Service struct {
 	Name          string        `json:"name"`
-	APIEndpoints  []APIEndpoint `json:"api_endpoints"`
-	IsAuthService bool          `json:"is_auth_service"`
-	RelatedModels []string      `json:"related_models"`
+	APIEndpoints  []APIEndpoint `json:"apiEndpoints"`
+	IsAuthService bool          `json:"isAuthService"`
+	RelatedModels []string      `json:"relatedModels"`
 }
 
 type APIEndpoint struct {

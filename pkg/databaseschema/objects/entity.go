@@ -19,4 +19,6 @@ type Entity struct {
 	Day                string
 	Time               string
 	OrganizationName   string
+	Authenticatable    bool
+	RequiredIndexes    [][]string
 }

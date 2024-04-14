@@ -7,20 +7,21 @@ import (
 )
 
 type Payload struct {
-	TemplateName     string
-	ProjectName      string
-	ProjectBasePath  string
-	ProjectPath      string
-	ApiFileName      string
-	ApiInfoFileName  string
-	DatabaseFileName string
-	ServiceFileName  string
-	OrganizationName string
-	OpenAPISpec      *apiObjects.API
-	DatabaseSchema   *databaseObject.Schema
-	TypeMapper       *data_mapper.Mapper
-	Authentication   Authentication
-	Count            int
-	Debug            bool
-	HasAdminAPI      bool
+	TemplateName         string
+	ProjectName          string
+	ProjectBasePath      string
+	ProjectPath          string
+	ApiFileName          string
+	ApiInfoFileName      string
+	DatabaseFileName     string
+	DatabaseInfoFileName string
+	ServiceFileName      string
+	OrganizationName     string
+	OpenAPISpec          *apiObjects.API
+	DatabaseSchema       *databaseObject.Schema
+	TypeMapper           *data_mapper.Mapper
+	Authentication       Authentication
+	Count                int
+	Debug                bool
+	HasAdminAPI          bool
 }

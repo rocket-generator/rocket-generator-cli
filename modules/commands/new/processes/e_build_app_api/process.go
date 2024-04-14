@@ -39,10 +39,14 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		}
 		if !request.HasStatusResponse && !request.SuccessResponse.IsList {
 			// Require DTO
+			var targetModelNames []string
+			if request.TargetModel != nil {
+				targetModelNames = append(targetModelNames, request.TargetModel.Original)
+			}
 			dtoArgument := createDtoCommand.Arguments{
 				Type:              "dto",
 				Name:              request.SuccessResponse.Schema.Name.Default.Title,
-				RelatedModelNames: nil,
+				RelatedModelNames: targetModelNames,
 				RelatedResponse:   request.SuccessResponse,
 				ProjectPath:       payload.ProjectPath,
 				Debug:             payload.Debug,

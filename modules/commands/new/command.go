@@ -9,6 +9,7 @@ import (
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_api_info_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_api_spec_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/b_parse_service_definition_file"
+	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/c_parse_database_info_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/c_parse_database_spec_file"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/d_build_crossover_information"
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/new/processes/e_build_app_api"
@@ -21,21 +22,22 @@ type Command struct {
 
 func (c *Command) Execute(arguments Arguments) error {
 	_payload := &payload.Payload{
-		TemplateName:     arguments.Template,
-		ProjectName:      arguments.ProjectName,
-		ProjectBasePath:  arguments.ProjectBasePath,
-		ProjectPath:      arguments.ProjectBasePath,
-		ApiFileName:      arguments.ApiFileName,
-		ApiInfoFileName:  arguments.ApiInfoFileName,
-		DatabaseFileName: arguments.DatabaseFileName,
-		ServiceFileName:  arguments.ServiceFileName,
-		OrganizationName: arguments.OrganizationName,
-		OpenAPISpec:      nil,
-		DatabaseSchema:   nil,
-		TypeMapper:       nil,
-		Count:            0,
-		Debug:            arguments.Debug,
-		HasAdminAPI:      !arguments.NoAdmin,
+		TemplateName:         arguments.Template,
+		ProjectName:          arguments.ProjectName,
+		ProjectBasePath:      arguments.ProjectBasePath,
+		ProjectPath:          arguments.ProjectBasePath,
+		ApiFileName:          arguments.ApiFileName,
+		ApiInfoFileName:      arguments.ApiInfoFileName,
+		DatabaseFileName:     arguments.DatabaseFileName,
+		DatabaseInfoFileName: arguments.DatabaseInfoFileName,
+		ServiceFileName:      arguments.ServiceFileName,
+		OrganizationName:     arguments.OrganizationName,
+		OpenAPISpec:          nil,
+		DatabaseSchema:       nil,
+		TypeMapper:           nil,
+		Count:                0,
+		Debug:                arguments.Debug,
+		HasAdminAPI:          !arguments.NoAdmin,
 	}
 
 	_processes := []processes.ProcessInterface{
@@ -44,6 +46,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		&b_parse_api_info_file.Process{},
 		&b_parse_service_definition_file.Process{},
 		&c_parse_database_spec_file.Process{},
+		&c_parse_database_info_file.Process{},
 		&d_build_crossover_information.Process{},
 		&e_build_app_api.Process{},
 		&f_build_database.Process{},

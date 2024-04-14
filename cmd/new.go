@@ -8,16 +8,17 @@ import (
 )
 
 var newArguments = newCommand.Arguments{
-	ProjectName:      "",
-	ProjectBasePath:  "",
-	Template:         "",
-	ApiFileName:      "",
-	ApiInfoFileName:  "",
-	DatabaseFileName: "",
-	ServiceFileName:  "",
-	OrganizationName: "",
-	Debug:            false,
-	NoAdmin:          false,
+	ProjectName:          "",
+	ProjectBasePath:      "",
+	Template:             "",
+	ApiFileName:          "",
+	ApiInfoFileName:      "",
+	DatabaseFileName:     "",
+	DatabaseInfoFileName: "",
+	ServiceFileName:      "",
+	OrganizationName:     "",
+	Debug:                false,
+	NoAdmin:              false,
 }
 
 var newCmd = &cobra.Command{
@@ -53,6 +54,7 @@ func init() {
 	newCmd.Flags().StringVarP(&newArguments.ApiFileName, "api", "a", "api.yaml", "specify OpenAPI Spec Yaml file")
 	newCmd.Flags().StringVarP(&newArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
 	newCmd.Flags().StringVarP(&newArguments.ApiInfoFileName, "api_info", "i", "", "specify api info json file")
+	newCmd.Flags().StringVarP(&newArguments.DatabaseInfoFileName, "db_info", "j", "", "specify database info json file")
 	newCmd.Flags().StringVarP(&newArguments.ServiceFileName, "service", "s", "", "specify service path mapping json file")
 	newCmd.Flags().StringVarP(&newArguments.OrganizationName, "organization", "o", "your_org", "specify your (github) organization name")
 	newCmd.Flags().StringVarP(&newArguments.ProjectBasePath, "path", "p", "", "path to create project")

@@ -8,11 +8,12 @@ import (
 
 // Payload ...
 type Payload struct {
-	Type           string
-	Name           create.Name
-	DatabaseSchema *databaseObject.Schema
-	Entity         *databaseObject.Entity
-	TypeMapper     *data_mapper.Mapper
-	ProjectPath    string
-	Debug          bool
+	Type            string
+	Name            create.Name
+	DatabaseSchema  *databaseObject.Schema
+	Entity          *databaseObject.Entity
+	TypeMapper      *data_mapper.Mapper
+	ProjectPath     string
+	Authenticatable bool
+	Debug           bool
 }

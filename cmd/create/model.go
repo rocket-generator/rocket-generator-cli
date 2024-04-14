@@ -11,6 +11,7 @@ var createModelArguments = command.Arguments{
 	DatabaseFileName: "",
 	ProjectPath:      "",
 	Debug:            false,
+	Authenticatable:  false,
 }
 
 var ModelCmd = &cobra.Command{

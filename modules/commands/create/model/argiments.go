@@ -13,5 +13,6 @@ type Arguments struct {
 	DatabaseSchema   *databaseObject.Schema
 	Entity           *databaseObject.Entity
 	TypeMapper       *data_mapper.Mapper
+	Authenticatable  bool
 	Debug            bool
 }

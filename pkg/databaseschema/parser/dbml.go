@@ -36,6 +36,8 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			Day:                time.Now().Format("02"),
 			Time:               time.Now().Format("150405"),
 			OrganizationName:   organizationName,
+			Authenticatable:    false,
+			RequiredIndexes:    [][]string{},
 		}
 		for _, column := range entity.Columns {
 			primary := false

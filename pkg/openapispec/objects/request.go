@@ -23,4 +23,5 @@ type Request struct {
 	RequestSubType    string
 	TargetModel       *Name
 	HasStatusResponse bool
+	RelatedServices   []Name
 }
