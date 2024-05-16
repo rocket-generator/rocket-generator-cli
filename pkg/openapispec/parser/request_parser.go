@@ -27,15 +27,19 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 				RequestType:       "",
 				RequestSubType:    "",
 				TargetModel:       nil,
+				AncestorModels:    []objects.AncestorModel{},
 				HasStatusResponse: false,
 			}
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
 				parameter := parameterReference.Value
+				dataType := parameter.Schema.Value.Type
 				request.Parameters = append(request.Parameters, &objects.Parameter{
-					Name:     generateName(parameter.Name),
-					In:       parameter.In,
-					Required: parameter.Required,
+					Name:       generateName(parameter.Name),
+					In:         parameter.In,
+					Required:   parameter.Required,
+					Type:       dataType,
+					ObjectType: data_mapper.MapString(typeMapper, "database", dataType),
 				})
 			}
 			for _, parameterReference := range pathItem.Parameters {

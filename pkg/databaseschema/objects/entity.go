@@ -21,4 +21,6 @@ type Entity struct {
 	OrganizationName   string
 	Authenticatable    bool
 	RequiredIndexes    [][]string
+	Index              int
+	IndexString4Digit  string
 }

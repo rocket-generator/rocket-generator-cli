@@ -2,6 +2,7 @@ package parser
 
 import (
 	"errors"
+	"fmt"
 	"github.com/duythinht/dbml-go/core"
 	"github.com/duythinht/dbml-go/parser"
 	"github.com/duythinht/dbml-go/scanner"
@@ -21,7 +22,7 @@ type RelationKey struct {
 
 func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *data_mapper.Mapper) []*objects.Entity {
 	var entities []*objects.Entity
-	for _, entity := range dbmlObject.Tables {
+	for index, entity := range dbmlObject.Tables {
 		entityName := entity.Name
 		entityObject := objects.Entity{
 			Name:               generateName(entityName),
@@ -38,6 +39,8 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			OrganizationName:   organizationName,
 			Authenticatable:    false,
 			RequiredIndexes:    [][]string{},
+			Index:              index + 1,
+			IndexString4Digit:  fmt.Sprintf("%04d", index+1),
 		}
 		for _, column := range entity.Columns {
 			primary := false

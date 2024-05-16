@@ -22,6 +22,14 @@ type Request struct {
 	RequestType       string
 	RequestSubType    string
 	TargetModel       *Name
+	AncestorModels    []AncestorModel
 	HasStatusResponse bool
 	RelatedServices   []Name
+}
+
+// AncestorModel ...
+type AncestorModel struct {
+	Name      Name
+	Parameter Name
+	Column    Name
 }

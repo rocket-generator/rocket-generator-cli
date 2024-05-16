@@ -14,14 +14,21 @@ type Process struct {
 }
 
 type API struct {
-	Path          string   `json:"path"`
-	Method        string   `json:"method"`
-	Type          string   `json:"type"`
-	SubType       string   `json:"subType"`
-	Group         string   `json:"group"`
-	RequireAuth   bool     `json:"requireAuth"`
-	RequiredRoles []string `json:"requiredRoles"`
-	TargetModel   string   `json:"targetModel"`
+	Path           string          `json:"path"`
+	Method         string          `json:"method"`
+	Type           string          `json:"type"`
+	SubType        string          `json:"subType"`
+	Group          string          `json:"group"`
+	RequireAuth    bool            `json:"requireAuth"`
+	RequiredRoles  []string        `json:"requiredRoles"`
+	TargetModel    string          `json:"targetModel"`
+	AncestorModels []AncestorModel `json:"ancestorModels"`
+}
+
+type AncestorModel struct {
+	Name      string `json:"name"`
+	Parameter string `json:"parameter"`
+	Column    string `json:"column"`
 }
 
 type APIs []API
@@ -74,6 +81,18 @@ func updateAPISpec(payload *newCommand.Payload, apis *APIs) {
 				payload.OpenAPISpec.Requests[index].RequireAuth = api.RequireAuth
 				payload.OpenAPISpec.Requests[index].RequiredRoles = api.RequiredRoles
 				payload.OpenAPISpec.Requests[index].GroupRelativePath = generateGroupRelativePath(api.Group, request.Path)
+				if len(api.AncestorModels) > 0 {
+					for _, ancestorModel := range api.AncestorModels {
+						ancestorModelName := generateName(ancestorModel.Name)
+						parameterName := generateName(ancestorModel.Parameter)
+						columnName := generateName(ancestorModel.Column)
+						payload.OpenAPISpec.Requests[index].AncestorModels = append(payload.OpenAPISpec.Requests[index].AncestorModels, objects.AncestorModel{
+							Name:      ancestorModelName,
+							Parameter: parameterName,
+							Column:    columnName,
+						})
+					}
+				}
 				if requestGroupMap[api.Group] == nil {
 					requestGroupMap[api.Group] = &objects.RequestGroup{
 						PathPrefix: api.Group,
