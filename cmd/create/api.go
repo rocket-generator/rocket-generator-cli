@@ -13,6 +13,7 @@ var createApiArguments = command.Arguments{
 	ApiFileName:     "",
 	ApiInfoFileName: "",
 	ProjectPath:     "",
+	ServiceFileName: "",
 	Debug:           false,
 }
 
@@ -41,4 +42,9 @@ rocket create api get /users
 
 func init() {
 	ApiCmd.Flags().StringVarP(&createApiArguments.ProjectPath, "path", "p", "", "path to create project")
+	ApiCmd.Flags().StringVarP(&createApiArguments.ApiFileName, "api", "a", "api.yaml", "specify OpenAPI Spec Yaml file")
+	ApiCmd.Flags().StringVarP(&createApiArguments.DatabaseFileName, "database", "d", "api.yaml", "specify database PlantUML file")
+	ApiCmd.Flags().StringVarP(&createApiArguments.ApiInfoFileName, "api_info", "i", "", "specify api info json file")
+	ApiCmd.Flags().StringVarP(&createApiArguments.DatabaseInfoFileName, "db_info", "j", "", "specify database info json file")
+	ApiCmd.Flags().StringVarP(&createApiArguments.ServiceFileName, "service", "s", "", "specify service path mapping json file")
 }

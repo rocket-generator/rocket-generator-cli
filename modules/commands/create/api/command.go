@@ -1,8 +1,11 @@
 package api
 
 import (
+	"errors"
+	"fmt"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	openApiParser "github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/parser"
+	"github.com/stoewer/go-strcase"
 	"path/filepath"
 )
 
@@ -31,7 +34,18 @@ func (c *Command) Execute(arguments Arguments) error {
 			"",
 			typeMapper,
 		)
+		if err != nil {
+			return err
+		}
 		arguments.ApiSpec = api
+
+		if arguments.ApiInfoFileName != "" {
+			err := openApiParser.ParseAPIInfoFile(arguments.ApiInfoFileName, arguments.ApiSpec)
+			if err != nil {
+				return err
+			}
+		}
+
 	}
 
 	payload := Payload{
@@ -42,13 +56,19 @@ func (c *Command) Execute(arguments Arguments) error {
 		Debug:       arguments.Debug,
 	}
 
+	method := strcase.LowerCamelCase(arguments.Method)
 	if payload.Request == nil {
 		for _, request := range payload.ApiSpec.Requests {
-			if request.Path == arguments.Path && request.Method.Original == arguments.Method {
+			fmt.Println(request.Path, arguments.Path, request.Method.Original, method)
+			if request.Path == arguments.Path && request.Method.Snake == method {
 				payload.Request = request
 				break
 			}
 		}
+	}
+
+	if payload.Request == nil {
+		return errors.New("request not found")
 	}
 
 	err = create.GenerateFileFromTemplate(payload.ProjectPath, payload.Type, *payload.Request)

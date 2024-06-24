@@ -23,4 +23,5 @@ type Entity struct {
 	RequiredIndexes    [][]string
 	Index              int
 	IndexString4Digit  string
+	Hash12Digit        string
 }

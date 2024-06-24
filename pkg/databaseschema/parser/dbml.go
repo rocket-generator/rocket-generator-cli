@@ -41,6 +41,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			RequiredIndexes:    [][]string{},
 			Index:              index + 1,
 			IndexString4Digit:  fmt.Sprintf("%04d", index+1),
+			Hash12Digit:        fmt.Sprintf("%x%04d", time.Now().Format("20060102"), index+1),
 		}
 		for _, column := range entity.Columns {
 			primary := false

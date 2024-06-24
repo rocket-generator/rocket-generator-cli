@@ -6,14 +6,17 @@ import (
 )
 
 type Arguments struct {
-	Type            string
-	Path            string
-	Method          string
-	ApiFileName     string
-	ApiInfoFileName string
-	Request         *objects.Request
-	ApiSpec         *objects.API
-	TypeMapper      *data_mapper.Mapper
-	ProjectPath     string
-	Debug           bool
+	Type                 string
+	Path                 string
+	Method               string
+	ApiFileName          string
+	ApiInfoFileName      string
+	ServiceFileName      string
+	DatabaseFileName     string
+	DatabaseInfoFileName string
+	Request              *objects.Request
+	ApiSpec              *objects.API
+	TypeMapper           *data_mapper.Mapper
+	ProjectPath          string
+	Debug                bool
 }
