@@ -36,7 +36,7 @@ func Parse(filePath string, namespace string, projectName string, organizationNa
 
 	data.RouteNameSpace = buildRouteNameSpace(data.BasePath, defaultRouteNamespace)
 	parseComponents(*openApiData.Components, &data, typeMapper)
-	parsePaths(openApiData.Paths, &data, typeMapper)
+	parsePaths(*openApiData.Paths, &data, typeMapper)
 
 	return &data, nil
 }

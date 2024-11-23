@@ -20,5 +20,43 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		return nil, err
 	}
 	payload.OpenAPISpec = api
+	return process.GuessCRUD(payload)
+}
+
+func (process *Process) GuessCRUD(payload *newCommand.Payload) (*newCommand.Payload, error) {
+	api := payload.OpenAPISpec
+	if api == nil {
+		return payload, nil
+	}
+
+	if len(api.Requests) == 0 {
+		return payload, nil
+	}
+
+	for _, request := range api.Requests {
+		request.TargetModel = &request.PathName
+		switch request.Method.Title {
+		case "Delete":
+			request.RequestType = "crud"
+			request.RequestSubType = "delete"
+		case "Put":
+			request.RequestType = "crud"
+			request.RequestSubType = "update"
+		case "Post":
+			if request.PathName.Plural.Snake == request.PathName.Default.Snake {
+				request.RequestType = "crud"
+				request.RequestSubType = "create"
+			}
+		case "Get":
+			if request.PathName.Plural.Snake == request.PathName.Default.Snake {
+				request.RequestType = "crud"
+				request.RequestSubType = "index"
+			} else if request.PathName.Singular.Snake == request.PathName.Default.Snake {
+				request.RequestType = "crud"
+				request.RequestSubType = "get"
+			}
+		}
+	}
+
 	return payload, nil
 }

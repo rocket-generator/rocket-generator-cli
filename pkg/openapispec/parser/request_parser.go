@@ -1,17 +1,18 @@
 package parser
 
 import (
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/jinzhu/inflection"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
-	"strings"
 )
 
 func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper.Mapper) {
 
-	for path, pathItem := range paths {
+	for path, pathItem := range paths.Map() {
 		for method, operation := range pathItem.Operations() {
 			request := objects.Request{
 				Path:              path,
@@ -33,7 +34,7 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 			// Parameters
 			for _, parameterReference := range operation.Parameters {
 				parameter := parameterReference.Value
-				dataType := parameter.Schema.Value.Type
+				dataType := (*parameter.Schema.Value.Type)[0]
 				request.Parameters = append(request.Parameters, &objects.Parameter{
 					Name:       generateName(parameter.Name),
 					In:         parameter.In,
@@ -65,7 +66,7 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 					}
 				}
 			}
-			for statusCode, schemaObject := range operation.Responses {
+			for statusCode, schemaObject := range operation.Responses.Map() {
 				responseSchema := schemaObject.Value.Content.Get("application/json")
 
 				if responseSchema != nil {

@@ -14,7 +14,7 @@ func parseComponents(components openapi3.Components, api *objects.API, typeMappe
 		if specSchema == nil {
 			continue
 		}
-		if specSchema.Type != "object" {
+		if specSchema.Type == nil || len(*specSchema.Type) == 0 || (*specSchema.Type)[0] != "object" {
 			continue
 		}
 		schemaName := getSchemaNameFromSchema(name, schemaRef.Value)
@@ -31,19 +31,21 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 	for _, requiredColumn := range schema.Required {
 		requiredMap[requiredColumn] = true
 	}
+
 	for name, property := range schema.Properties {
 		_, required := requiredMap[name]
-		switch property.Value.Type {
+		dataType := (*property.Value.Type)[0]
+		switch dataType {
 		case "array":
 			itemName := getSchemaNameFromSchema(property.Value.Items.Ref, property.Value.Items.Value)
 			item := property.Value.Items.Value
 			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:          generateName(name),
-				Type:          property.Value.Type,
-				ObjectType:    data_mapper.MapString(typeMapper, "database", property.Value.Type),
-				CodeType:      data_mapper.MapString(typeMapper, "code", property.Value.Type),
+				Type:          (*property.Value.Type)[0],
+				ObjectType:    data_mapper.MapString(typeMapper, "database", dataType),
+				CodeType:      data_mapper.MapString(typeMapper, "code", dataType),
 				Description:   property.Value.Description,
-				ArrayItemType: item.Type,
+				ArrayItemType: (*item.Type)[0],
 				ArrayItemName: itemName,
 				Required:      required,
 			})
@@ -51,9 +53,9 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 			propertyName := getSchemaNameFromSchema(property.Ref, property.Value)
 			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:        generateName(name),
-				Type:        property.Value.Type,
-				ObjectType:  data_mapper.MapString(typeMapper, "database", property.Value.Type),
-				CodeType:    data_mapper.MapString(typeMapper, "code", property.Value.Type),
+				Type:        (*property.Value.Type)[0],
+				ObjectType:  data_mapper.MapString(typeMapper, "database", dataType),
+				CodeType:    data_mapper.MapString(typeMapper, "code", dataType),
 				Description: property.Value.Description,
 				Reference:   propertyName,
 				Required:    required,
@@ -61,9 +63,9 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 		default:
 			schemaObject.Properties = append(schemaObject.Properties, &objects.Property{
 				Name:        generateName(name),
-				Type:        property.Value.Type,
-				ObjectType:  data_mapper.MapString(typeMapper, "database", property.Value.Type),
-				CodeType:    data_mapper.MapString(typeMapper, "code", property.Value.Type),
+				Type:        (*property.Value.Type)[0],
+				ObjectType:  data_mapper.MapString(typeMapper, "database", dataType),
+				CodeType:    data_mapper.MapString(typeMapper, "code", dataType),
 				Description: property.Value.Description,
 				Required:    required,
 			})

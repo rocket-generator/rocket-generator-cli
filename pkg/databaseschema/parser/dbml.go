@@ -3,14 +3,15 @@ package parser
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/duythinht/dbml-go/core"
 	"github.com/duythinht/dbml-go/parser"
 	"github.com/duythinht/dbml-go/scanner"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
-	"os"
-	"strings"
-	"time"
 )
 
 type RelationKey struct {
@@ -20,14 +21,42 @@ type RelationKey struct {
 	ToColumnName   string
 }
 
+func (r RelationKey) String() string {
+	return fmt.Sprintf("%s.%s.%s.%s", r.FromTableName, r.FromColumnName, r.ToTableName, r.ToColumnName)
+}
+
+// Parsed RelationKey Serialized string to structure
+func ParseRelationKey(key string) (RelationKey, error) {
+	parts := strings.Split(key, ".")
+	if len(parts) != 4 {
+		return RelationKey{}, errors.New("invalid format: expected 'tablename.columnname-tablename.columnname'")
+	}
+	return RelationKey{
+		FromTableName:  parts[0],
+		FromColumnName: parts[1],
+		ToTableName:    parts[2],
+		ToColumnName:   parts[3],
+	}, nil
+}
+
 func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *data_mapper.Mapper) []*objects.Entity {
 	var entities []*objects.Entity
 	for index, entity := range dbmlObject.Tables {
 		entityName := entity.Name
+		// Detect PK
+		primaryKey := "id"
+		primaryKeyDataType := "int64"
+		for _, column := range entity.Columns {
+			if column.Settings.PK {
+				primaryKey = column.Name
+				dataType, _ := convertDataTypeToDataTypeAndSize(strings.ToLower(column.Type))
+				primaryKeyDataType = dataType
+			}
+		}
 		entityObject := objects.Entity{
 			Name:               generateName(entityName),
-			PrimaryKeyDataType: "int64",
-			PrimaryKeyName:     "id",
+			PrimaryKeyDataType: primaryKeyDataType,
+			PrimaryKeyName:     primaryKey,
 			HasDecimal:         false,
 			HasJSON:            false,
 			UseSoftDelete:      false,
@@ -62,6 +91,10 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 					entityObject.PrimaryKeyDataType = "uuid"
 				}
 			}
+			isForeignKey := false
+			if column.Settings.Ref.Type != core.None {
+				isForeignKey = true
+			}
 
 			columnObject := &objects.Column{
 				TableName:    entityObject.Name,
@@ -72,6 +105,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 				Primary:      primary,
 				Nullable:     nullable,
 				DefaultValue: defaultValue,
+				IsForeignKey: isForeignKey,
 				Note:         column.Settings.Note,
 			}
 			columnObject.APIReturnable = checkAPIReturnable(columnObject)
@@ -114,12 +148,18 @@ func addToRef(
 	toTableName string,
 	toColumnName string,
 	referenceType core.RelationshipType,
-	resultHash *map[RelationKey]objects.Relation,
+	resultHash *map[string]objects.Relation,
 	data *objects.Schema,
 ) {
 	leftTableIndex := findEntityIndex(fromTableName, data)
 	rightTableIndex := findEntityIndex(toTableName, data)
 	if leftTableIndex == -1 || rightTableIndex == -1 {
+		if leftTableIndex == -1 {
+			fmt.Println("Table Not found:", fromTableName, toTableName)
+		}
+		if rightTableIndex == -1 {
+			fmt.Println("Table Not found:", toTableName, fromTableName)
+		}
 		return
 	}
 	leftTable := data.Entities[leftTableIndex]
@@ -128,6 +168,12 @@ func addToRef(
 	rightColumnIndex := findRelationColumnIndex(toColumnName, rightTable)
 
 	if leftColumnIndex == -1 || rightColumnIndex == -1 {
+		if leftColumnIndex == -1 {
+			fmt.Println("Column Not found:", fromColumnName, leftTable.Name.Original)
+		}
+		if rightColumnIndex == -1 {
+			fmt.Println("Column Not found:", toColumnName, rightTable.Name.Original)
+		}
 		return
 	}
 
@@ -150,46 +196,50 @@ func addToRef(
 
 	switch referenceType {
 	case core.OneToOne:
-		leftRelation.RelationType = "hasOne"
-		rightRelation.RelationType = "belongsTo"
-		break
+		leftRelation.RelationType = "belongsTo"
+		rightRelation.RelationType = "hasOne"
 	case core.OneToMany:
 		leftRelation.RelationType = "belongsTo"
 		rightRelation.RelationType = "hasMany"
 		rightRelation.MultipleEntities = true
-		break
 	case core.ManyToOne:
-		leftRelation.RelationType = "hasMany"
+		leftRelation.RelationType = "belongsTo"
+		rightRelation.RelationType = "hasMany"
 		leftRelation.MultipleEntities = true
-		rightRelation.RelationType = "belongsTo"
-		break
 	}
+
+	// set isForeignKey
+	leftRelation.Column.IsForeignKey = true
+
+	fmt.Println("Relation:", leftRelation.Name.Original, "->", rightRelation.Name.Original, "Type:", leftRelation.RelationType)
+	fmt.Println("Relation:", rightRelation.Name.Original, "->", leftRelation.Name.Original, "Type:", rightRelation.RelationType)
 
 	(*resultHash)[RelationKey{
 		FromTableName:  fromTableName,
 		FromColumnName: fromColumnName,
 		ToTableName:    toTableName,
 		ToColumnName:   toColumnName,
-	}] = leftRelation
+	}.String()] = leftRelation
 	(*resultHash)[RelationKey{
 		FromTableName:  toTableName,
 		FromColumnName: toColumnName,
 		ToTableName:    fromTableName,
 		ToColumnName:   fromColumnName,
-	}] = rightRelation
+	}.String()] = rightRelation
 }
 
 func ParseRefs(dbmlObject *core.DBML, data *objects.Schema) {
-	relationEntries := make(map[RelationKey]objects.Relation)
+	relationEntries := make(map[string]objects.Relation)
 
 	// Parse Inline Reference
 	for _, entity := range dbmlObject.Tables {
 		for _, column := range entity.Columns {
 			if column.Settings.Ref.Type != core.None && column.Settings.Ref.To != "" {
 				refTableName, refColumnName, err := parseRelation(column.Settings.Ref.To)
-				if err == nil {
+				if err != nil {
 					continue
 				}
+				fmt.Println("Type:", column.Settings.Ref.Type)
 				addToRef(entity.Name, column.Name, *refTableName, *refColumnName, column.Settings.Ref.Type, &relationEntries, data)
 			}
 		}
@@ -208,16 +258,21 @@ func ParseRefs(dbmlObject *core.DBML, data *objects.Schema) {
 		}
 	}
 
-	for key, relation := range relationEntries {
+	for keyString, relation := range relationEntries {
+		key, err := ParseRelationKey(keyString)
+		if err != nil {
+			fmt.Println("Invalid relation key:", keyString)
+			continue
+		}
+		fmt.Println("Relation:", key.FromTableName, key.FromColumnName, key.ToTableName, key.ToColumnName, relation.RelationType)
 		leftTableIndex := findEntityIndex(key.FromTableName, data)
 		rightTableIndex := findEntityIndex(key.ToTableName, data)
 		if leftTableIndex == -1 || rightTableIndex == -1 {
+			fmt.Println("Not found:", key.FromTableName, key.ToTableName)
 			continue
 		}
 		leftTable := data.Entities[leftTableIndex]
-		rightTable := data.Entities[rightTableIndex]
 		leftTable.Relations = append(leftTable.Relations, &relation)
-		rightTable.Relations = append(rightTable.Relations, &relation)
 	}
 }
 

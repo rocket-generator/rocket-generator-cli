@@ -71,6 +71,17 @@ func (c *Command) Execute(arguments Arguments) error {
 		return errors.New("request not found")
 	}
 
+	successResponse := payload.Request.SuccessResponse
+	if successResponse != nil {
+		if payload.Request.TargetModel != nil {
+			if successResponse.Schema.Name.Default.Title == payload.Request.TargetModel.Plural.Title {
+				payload.Request.SuccessResponse.IsList = true
+			} else {
+				payload.Request.SuccessResponse.IsList = false
+			}
+		}
+	}
+
 	err = create.GenerateFileFromTemplate(payload.ProjectPath, payload.Type, *payload.Request)
 	if err != nil {
 		return err

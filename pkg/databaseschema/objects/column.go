@@ -14,6 +14,7 @@ type Column struct {
 	APIType           string
 	FakerType         string
 	IsCommonColumn    bool
+	IsForeignKey      bool
 	TableName         Name
 	RelationTableName Name
 	IsSystemUseColumn bool

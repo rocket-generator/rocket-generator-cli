@@ -1,12 +1,13 @@
 package parser
 
 import (
-	"github.com/jinzhu/inflection"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
-	"github.com/stoewer/go-strcase"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/jinzhu/inflection"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
+	"github.com/stoewer/go-strcase"
 )
 
 func findEntityIndex(name string, schema *objects.Schema) int {
@@ -19,7 +20,7 @@ func findEntityIndex(name string, schema *objects.Schema) int {
 }
 
 func findRelationColumnIndex(name string, table *objects.Entity) int {
-	columnName := inflection.Singular(name) + "_id"
+	columnName := inflection.Singular(name)
 	for index, column := range table.Columns {
 		if column.Name.Original == columnName {
 			return index

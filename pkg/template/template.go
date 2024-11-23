@@ -3,11 +3,12 @@ package template
 import (
 	"bytes"
 	"fmt"
-	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 	"os"
 	"path/filepath"
 	textTemplate "text/template"
+
+	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
 )
 
 // GenerateFileFromTemplate ...
