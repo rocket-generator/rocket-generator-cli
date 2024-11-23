@@ -1,16 +1,20 @@
 package parser
 
 import (
+	"net/url"
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
-	"net/url"
-	"strings"
 )
 
 // Parse ...
 func Parse(filePath string, namespace string, projectName string, organizationName string, typeMapper *data_mapper.Mapper) (*objects.API, error) {
+
+	orderedProperties := ParseSchemaPropertyOrder(filePath)
+
 	defaultRouteNamespace := namespace
 	data := objects.API{
 		FilePath:         filePath,
@@ -35,8 +39,8 @@ func Parse(filePath string, namespace string, projectName string, organizationNa
 	}
 
 	data.RouteNameSpace = buildRouteNameSpace(data.BasePath, defaultRouteNamespace)
-	parseComponents(*openApiData.Components, &data, typeMapper)
-	parsePaths(*openApiData.Paths, &data, typeMapper)
+	parseComponents(*openApiData.Components, &data, typeMapper, orderedProperties)
+	parsePaths(*openApiData.Paths, &data, typeMapper, orderedProperties)
 
 	return &data, nil
 }

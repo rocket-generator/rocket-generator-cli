@@ -1,0 +1,240 @@
+openapi: 3.1.0
+info:
+  title: api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /auth/signin:
+    post:
+      summary: ''
+      operationId: post-auth-signin
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+  /auth/signup:
+    post:
+      summary: ''
+      operationId: post-auth-signup
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+  /auth/forgot-password:
+    post:
+      summary: ''
+      operationId: post-auth-forgot-password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+  /auth/reset-password:
+    post:
+      summary: ''
+      operationId: post-auth-reset-password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+  /me:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+      operationId: get-me
+    put:
+      summary: ''
+      operationId: put-me
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutMeRequest'
+components:
+  schemas:
+    SignInRequest:
+      title: SignInRequest
+      type: object
+      properties:
+        email:
+          type: string
+          description: ログイン用の登録済みのメールアドレス
+        password:
+          type: string
+          description: ログイン用の登録済みのパスワード
+      required:
+        - email
+        - password
+    SignUpRequest:
+      title: SignUpRequest
+      type: object
+      properties:
+        email:
+          type: string
+          description: 登録したいメールアドレス
+        password:
+          type: string
+          description: 登録したいパスワード
+        name:
+          type: string
+          description: ユーザーの名前
+      required:
+        - email
+        - password
+        - name
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      type: object
+      properties:
+        email:
+          type: string
+          description: パスワードを忘れたアカウントの登録メールアドレス
+      required:
+        - email
+    ResetPasswordRequest:
+      title: ResetPasswordRequest
+      type: object
+      properties:
+        email:
+          type: string
+          description: パスワードリセットを行うメールアドレス
+        password:
+          type: string
+          description: 新しいパスワード
+        token:
+          type: string
+          description: メールにつけられていたトークン
+      required:
+        - email
+        - password
+        - token
+    Status:
+      title: Status
+      type: object
+      description: リクエストが成功したか失敗したかを表すレスポンスオブジェクト
+      properties:
+        success:
+          type: boolean
+          description: リクエストが成功したかどうかを表す真偽値
+        message:
+          type: string
+          description: エラーメッセージなど
+        invalid_params:
+          type: array
+          description: 引数に間違いがあった際には、その引数の一覧が入る。それ以外の場は要素そのものがつけられない。
+          items:
+            type: string
+        code:
+          type: integer
+          description: エラーによっては、クライアントで識別できるように数値が入っている場合がある。エラーコードが振られていないエラーの場合は0が入る。
+      required:
+        - success
+        - message
+        - code
+    AuthToken:
+      title: AuthToken
+      type: object
+      properties:
+        email:
+          type: string
+          description: ログインに利用するアカウントのメールアドレス
+        password:
+          type: string
+          description: ログイン用のパスワード
+      required:
+        - email
+        - password
+    Me:
+      title: Me
+      type: object
+      properties:
+        id:
+          type: string
+          description: UUIDv4のユニークユーザーID
+        email:
+          type: string
+          description: ユーザーのメールアドレス
+        name:
+          type: string
+          description: ユーザーの名前
+        permissions:
+          type: array
+          description: ユーザーの権限の配列。"admin"(管理者権限)など
+          items:
+            type: string
+      required:
+        - id
+        - email
+        - name
+        - permissions
+    PutMeRequest:
+      title: PutMeRequest
+      type: object
+      properties:
+        name:
+          type: string
+          description: 更新した名前。名前を変更しない場合は要素を省略
+        email:
+          type: string
+          description: メールアドレスを変更する場合のメールアドレス。メールアドレスを変更しない場合は要素を省略
+        password:
+          type: string
+          description: 変更するパスワード。パスワードを変更しない場合は、このフィールドを省略、あるいは空文字列を送る

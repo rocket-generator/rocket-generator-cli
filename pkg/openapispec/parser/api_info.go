@@ -2,10 +2,11 @@ package parser
 
 import (
 	"encoding/json"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
-	"github.com/stoewer/go-strcase"
 	"os"
 	"strings"
+
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
+	"github.com/stoewer/go-strcase"
 )
 
 func ParseAPIInfoFile(filename string, apiSpec *objects.API) error {

@@ -10,7 +10,7 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper.Mapper) {
+func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper.Mapper, orderedProperties *map[string]objects.OrderedProperties) {
 
 	for path, pathItem := range paths.Map() {
 		for method, operation := range pathItem.Operations() {
@@ -55,12 +55,18 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 				requestSchema := operation.RequestBody.Value.Content.Get("application/json")
 				if requestSchema != nil {
 					if requestSchema.Schema.Ref != "" {
+						var targetOrderedProperties *objects.OrderedProperties
+						if orderedProperties != nil {
+							if properties, ok := (*orderedProperties)[requestSchema.Schema.Ref]; ok {
+								targetOrderedProperties = &properties
+							}
+						}
 						requestName := getSchemaNameFromSchema(requestSchema.Schema.Ref, requestSchema.Schema.Value)
 						request.RequestSchemaName = generateName(requestName)
-						request.RequestSchema = generateSchemaObject(requestSchema.Schema.Ref, requestSchema.Schema.Value, typeMapper)
+						request.RequestSchema = generateSchemaObject(requestSchema.Schema.Ref, requestSchema.Schema.Value, typeMapper, targetOrderedProperties)
 					} else {
 						requestSchemaName := strcase.SnakeCase(path) + "_" + strings.ToLower(method) + "_request"
-						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value, typeMapper)
+						data.Schemas[requestSchemaName] = generateSchemaObject(requestSchemaName, requestSchema.Schema.Value, typeMapper, nil)
 						request.RequestSchemaName = generateName(requestSchemaName)
 						request.RequestSchema = data.Schemas[requestSchemaName]
 					}

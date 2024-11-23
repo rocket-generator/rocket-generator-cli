@@ -1,0 +1,10 @@
+Table users {
+  Note: 'ユーザー情報を格納するテーブル。管理者、一般ユーザーどちらもこのテーブルに格納する'
+  id UUID [pk]
+  name  TEXT [not null, note: 'ユーザー名']
+  email TEXT [not null, note: 'メールアドレス']
+  password TEXT [not null, note: 'ハッシュ化されたパスワード']
+  permissions JSONB [not null, note: '権限の配列']
+  created_at DATETIME
+  updated_at DATETIME
+}

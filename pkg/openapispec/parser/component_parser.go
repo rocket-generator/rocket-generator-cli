@@ -1,14 +1,16 @@
 package parser
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 	"github.com/stoewer/go-strcase"
-	"strings"
 )
 
-func parseComponents(components openapi3.Components, api *objects.API, typeMapper *data_mapper.Mapper) {
+func parseComponents(components openapi3.Components, api *objects.API, typeMapper *data_mapper.Mapper, orderedProperties *map[string]objects.OrderedProperties) {
 	for name, schemaRef := range components.Schemas {
 		specSchema := schemaRef.Value
 		if specSchema == nil {
@@ -18,13 +20,20 @@ func parseComponents(components openapi3.Components, api *objects.API, typeMappe
 			continue
 		}
 		schemaName := getSchemaNameFromSchema(name, schemaRef.Value)
-		api.Schemas[schemaName] = generateSchemaObject(schemaName, schemaRef.Value, typeMapper)
+		var targetOrderedProperties *objects.OrderedProperties
+		if orderedProperties != nil {
+			if properties, ok := (*orderedProperties)[schemaName]; ok {
+				targetOrderedProperties = &properties
+			}
+		}
+		api.Schemas[schemaName] = generateSchemaObject(schemaName, schemaRef.Value, typeMapper, targetOrderedProperties)
 	}
 }
 
-func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data_mapper.Mapper) *objects.Schema {
+func generateSchemaObject(schemaName string, schema *openapi3.Schema, typeMapper *data_mapper.Mapper, targetOrderedProperties *objects.OrderedProperties) *objects.Schema {
+
 	schemaObject := objects.Schema{
-		Name:        generateName(name),
+		Name:        generateName(schemaName),
 		Description: schema.Description,
 	}
 	requiredMap := map[string]bool{}
@@ -32,7 +41,18 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 		requiredMap[requiredColumn] = true
 	}
 
-	for name, property := range schema.Properties {
+	if targetOrderedProperties == nil {
+		fmt.Println("No ordered properties for schema:", schemaName)
+		targetOrderedProperties = &objects.OrderedProperties{
+			Name:       schemaName,
+			Properties: []string{},
+		}
+		for name, _ := range schema.Properties {
+			targetOrderedProperties.Properties = append(targetOrderedProperties.Properties, name)
+		}
+	}
+	for _, name := range targetOrderedProperties.Properties {
+		property := schema.Properties[name]
 		_, required := requiredMap[name]
 		dataType := (*property.Value.Type)[0]
 		switch dataType {
@@ -75,9 +95,6 @@ func generateSchemaObject(name string, schema *openapi3.Schema, typeMapper *data
 }
 
 func getSchemaNameFromSchema(name string, schema *openapi3.Schema) string {
-	if schema.Title != "" {
-		return schema.Title
-	}
 	elements := strings.Split(name, "/")
 	schemaName := strcase.SnakeCase(elements[len(elements)-1])
 	return schemaName
