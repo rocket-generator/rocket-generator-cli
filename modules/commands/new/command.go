@@ -62,7 +62,6 @@ func (c *Command) Execute(arguments Arguments) error {
 			red := color.New(color.FgRed)
 			_, _ = red.Println(err.Error())
 			panic(err)
-			return nil
 		}
 		_payload.Count++
 	}

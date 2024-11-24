@@ -211,8 +211,8 @@ func addToRef(
 	// set isForeignKey
 	leftRelation.Column.IsForeignKey = true
 
-	fmt.Println("Relation:", leftRelation.Name.Original, "->", rightRelation.Name.Original, "Type:", leftRelation.RelationType)
-	fmt.Println("Relation:", rightRelation.Name.Original, "->", leftRelation.Name.Original, "Type:", rightRelation.RelationType)
+	//	fmt.Println("Relation:", leftRelation.Name.Original, "->", rightRelation.Name.Original, "Type:", leftRelation.RelationType)
+	//	fmt.Println("Relation:", rightRelation.Name.Original, "->", leftRelation.Name.Original, "Type:", rightRelation.RelationType)
 
 	(*resultHash)[RelationKey{
 		FromTableName:  fromTableName,
@@ -239,7 +239,6 @@ func ParseRefs(dbmlObject *core.DBML, data *objects.Schema) {
 				if err != nil {
 					continue
 				}
-				fmt.Println("Type:", column.Settings.Ref.Type)
 				addToRef(entity.Name, column.Name, *refTableName, *refColumnName, column.Settings.Ref.Type, &relationEntries, data)
 			}
 		}
@@ -264,7 +263,7 @@ func ParseRefs(dbmlObject *core.DBML, data *objects.Schema) {
 			fmt.Println("Invalid relation key:", keyString)
 			continue
 		}
-		fmt.Println("Relation:", key.FromTableName, key.FromColumnName, key.ToTableName, key.ToColumnName, relation.RelationType)
+		//		fmt.Println("Relation:", key.FromTableName, key.FromColumnName, key.ToTableName, key.ToColumnName, relation.RelationType)
 		leftTableIndex := findEntityIndex(key.FromTableName, data)
 		rightTableIndex := findEntityIndex(key.ToTableName, data)
 		if leftTableIndex == -1 || rightTableIndex == -1 {

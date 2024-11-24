@@ -20,7 +20,7 @@ var ServiceCmd = &cobra.Command{
 	Short: "Create a new service",
 	Long: `Create a new resource on the project.:
 
-rocket create service your-service-name --model=model1 --model=model2
+rocket create service your-service-name --model=model1 --crud_model=model2
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
@@ -35,5 +35,6 @@ rocket create service your-service-name --model=model1 --model=model2
 
 func init() {
 	ServiceCmd.Flags().StringVarP(&createServiceArguments.ProjectPath, "path", "p", "", "path to create project")
-	ServiceCmd.Flags().StringArrayVar(&createServiceArguments.RelatedModelNames, "model", []string{}, "related model names (can be specified multiple times)")
+	ServiceCmd.Flags().StringArrayVar(&createServiceArguments.RelatedModelNames, "model", []string{}, "related model name (can be specified multiple times)")
+	ServiceCmd.Flags().StringArrayVar(&createServiceArguments.RelatedModelWithCRUDNames, "crud_model", []string{}, "related model name which requires CRUD operations in this service(can be specified multiple times)")
 }

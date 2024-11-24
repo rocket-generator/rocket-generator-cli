@@ -5,11 +5,12 @@ import (
 )
 
 type Arguments struct {
-	Type              string
-	Name              string
-	RelatedModelNames []string
-	RelatedResponse   *objects.Response
-	IsAuthService     bool
-	ProjectPath       string
-	Debug             bool
+	Type                      string
+	Name                      string
+	RelatedModelNames         []string
+	RelatedModelWithCRUDNames []string
+	RelatedResponse           *objects.Response
+	IsAuthService             bool
+	ProjectPath               string
+	Debug                     bool
 }

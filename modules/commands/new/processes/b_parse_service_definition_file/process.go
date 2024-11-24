@@ -2,21 +2,27 @@ package b_parse_service_definition_file
 
 import (
 	"encoding/json"
+	"os"
+	"strings"
+
 	createServiceCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/service"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"github.com/stoewer/go-strcase"
-	"os"
-	"strings"
 )
 
 type Process struct {
+}
+
+type Model struct {
+	Name        string
+	IsCRUDModel bool
 }
 
 type Service struct {
 	Name          string        `json:"name"`
 	APIEndpoints  []APIEndpoint `json:"apiEndpoints"`
 	IsAuthService bool          `json:"isAuthService"`
-	RelatedModels []string      `json:"relatedModels"`
+	RelatedModels []Model       `json:"models"`
 }
 
 type APIEndpoint struct {
@@ -39,14 +45,27 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	if services != nil {
 		setServiceToAPISpec(payload, services)
 		for _, service := range *services {
+
+			var relatedModelNames []string
+			var relatedModelWithCRUDNames []string
+			for _, model := range service.RelatedModels {
+				if model.IsCRUDModel {
+					relatedModelWithCRUDNames = append(relatedModelWithCRUDNames, model.Name)
+				} else {
+					relatedModelNames = append(relatedModelNames, model.Name)
+				}
+
+			}
+
 			argument := createServiceCommand.Arguments{
-				Type:              "service",
-				Name:              service.Name,
-				RelatedModelNames: service.RelatedModels,
-				RelatedResponse:   nil,
-				IsAuthService:     service.IsAuthService,
-				ProjectPath:       payload.ProjectPath,
-				Debug:             payload.Debug,
+				Type:                      "service",
+				Name:                      service.Name,
+				RelatedModelNames:         relatedModelNames,
+				RelatedModelWithCRUDNames: relatedModelWithCRUDNames,
+				RelatedResponse:           nil,
+				IsAuthService:             service.IsAuthService,
+				ProjectPath:               payload.ProjectPath,
+				Debug:                     payload.Debug,
 			}
 			command := createServiceCommand.Command{}
 			err := command.Execute(argument)

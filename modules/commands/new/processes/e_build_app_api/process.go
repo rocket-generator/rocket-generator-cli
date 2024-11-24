@@ -3,10 +3,13 @@ package e_build_app_api
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/fatih/color"
 	createApiCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/api"
 	createDtoCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/dto"
+	createResponseCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/response"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
 )
 
 type Process struct {
@@ -37,6 +40,10 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		if err != nil {
 			return nil, err
 		}
+		err = process.createResponseRecursively(payload, request.SuccessResponse.Schema)
+		if err != nil {
+			return nil, err
+		}
 		if !request.HasStatusResponse && !request.SuccessResponse.IsList {
 			// Require DTO
 			var targetModelNames []string
@@ -59,4 +66,23 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		}
 	}
 	return payload, nil
+}
+
+func (process *Process) createResponseRecursively(payload *newCommand.Payload, schema *objects.Schema) error {
+	responseArgument := createResponseCommand.Arguments{
+		Type:        "response",
+		Name:        schema.Name.Default.Snake,
+		ApiFileName: payload.ApiFileName,
+		Schema:      schema,
+		ApiSpec:     payload.OpenAPISpec,
+		TypeMapper:  payload.TypeMapper,
+		ProjectPath: payload.ProjectPath,
+		Debug:       payload.Debug,
+	}
+	responseCommand := createResponseCommand.Command{}
+	err := responseCommand.Execute(responseArgument)
+	if err != nil {
+		return err
+	}
+	return nil
 }

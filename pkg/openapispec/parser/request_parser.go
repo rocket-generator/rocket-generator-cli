@@ -57,7 +57,8 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 					if requestSchema.Schema.Ref != "" {
 						var targetOrderedProperties *objects.OrderedProperties
 						if orderedProperties != nil {
-							if properties, ok := (*orderedProperties)[requestSchema.Schema.Ref]; ok {
+							schemaName := getSchemaNameFromSchema(requestSchema.Schema.Ref, requestSchema.Schema.Value)
+							if properties, ok := (*orderedProperties)[schemaName]; ok {
 								targetOrderedProperties = &properties
 							}
 						}
