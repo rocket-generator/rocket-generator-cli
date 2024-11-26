@@ -3,6 +3,7 @@ package e_build_app_api
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/fatih/color"
 	createApiCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/api"
@@ -17,6 +18,13 @@ type Process struct {
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
 	for _, request := range payload.OpenAPISpec.Requests {
+		ignoreKey := strings.ToLower(request.Method.Camel) + " " + strings.ToLower(request.Path)
+		// Ignore if ignoreKey is in payload.IgnoreList
+		if _, ok := payload.IgnoreList.Endpoints[ignoreKey]; ok {
+			yellow := color.New(color.FgYellow)
+			_, _ = yellow.Println("* Ignore api: " + ignoreKey)
+			continue
+		}
 		green := color.New(color.FgGreen)
 		_, _ = green.Println("* Generate files from api: " + request.Method.Original + " " + request.Path)
 		if payload.Debug {
@@ -76,6 +84,7 @@ func (process *Process) createResponseRecursively(payload *newCommand.Payload, s
 		Schema:      schema,
 		ApiSpec:     payload.OpenAPISpec,
 		TypeMapper:  payload.TypeMapper,
+		IgnoreList:  payload.IgnoreList,
 		ProjectPath: payload.ProjectPath,
 		Debug:       payload.Debug,
 	}

@@ -34,7 +34,7 @@ func (process *Process) GuessCRUD(payload *newCommand.Payload) (*newCommand.Payl
 	}
 
 	for _, request := range api.Requests {
-		request.TargetModel = &request.PathName
+		request.TargetModel = &request.SuccessResponse.Schema.Name
 		switch request.Method.Title {
 		case "Delete":
 			request.RequestType = "crud"

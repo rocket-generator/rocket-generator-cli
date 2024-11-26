@@ -3,6 +3,8 @@ package f_build_database
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/fatih/color"
 	createModelCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/create/model"
 	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
@@ -13,6 +15,13 @@ type Process struct {
 
 func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payload, error) {
 	for _, entity := range payload.DatabaseSchema.Entities {
+		ignoreKey := strings.ToLower(entity.Name.Original)
+		// Ignore if ignoreKey is in payload.IgnoreList
+		if _, ok := payload.IgnoreList.Tables[ignoreKey]; ok {
+			yellow := color.New(color.FgYellow)
+			_, _ = yellow.Println("* Ignore db table: " + ignoreKey)
+			continue
+		}
 		green := color.New(color.FgGreen)
 		_, _ = green.Println("* Generate files from db table: " + entity.Name.Original)
 		if payload.Debug {

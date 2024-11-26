@@ -2,7 +2,9 @@ package response
 
 import (
 	"errors"
+	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/rocket-generator/rocket-generator-cli/modules/commands/create"
 	openApiParser "github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/parser"
@@ -16,6 +18,15 @@ type Command struct {
 
 func (c *Command) Execute(arguments Arguments) error {
 	var err error
+
+	ignoreKey := strings.ToLower(arguments.Name)
+	if arguments.IgnoreList != nil {
+		if _, ok := arguments.IgnoreList.Responses[ignoreKey]; ok {
+			return nil
+		}
+	}
+
+	// Type mapper
 	typeMapper := arguments.TypeMapper
 	if typeMapper == nil {
 		typeMapperFilePath := filepath.Join(arguments.ProjectPath, "templates", "data", "types.json")
@@ -48,6 +59,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		return errors.New("schema " + responseName + " not found")
 	}
 
+	fmt.Println("Create response: " + responseName)
 	payload := &Payload{
 		Type:              "response",
 		Name:              create.GenerateName(responseName),
@@ -57,6 +69,7 @@ func (c *Command) Execute(arguments Arguments) error {
 		Debug:             arguments.Debug,
 		HasStatusResponse: arguments.HasStatusResponse,
 		IsList:            arguments.IsList,
+		IgnoreList:        arguments.IgnoreList,
 	}
 
 	if payload.Name.Singular.Snake == "status" {
@@ -76,10 +89,7 @@ func (c *Command) Execute(arguments Arguments) error {
 				hasCount = true
 			}
 		}
-		payload.HasStatusResponse = hasData && hasCount
-		if hasData && hasCount {
-			payload.IsList = true
-		}
+		payload.IsList = hasData && hasCount
 	} else {
 		payload.IsList = false
 	}

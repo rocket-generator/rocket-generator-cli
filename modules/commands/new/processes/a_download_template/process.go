@@ -2,14 +2,16 @@ package a_download_template
 
 import (
 	"errors"
-	"github.com/fatih/color"
-	cp "github.com/otiai10/copy"
-	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/fatih/color"
+	cp "github.com/otiai10/copy"
+	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/ignore_list"
 )
 
 type Process struct {
@@ -71,8 +73,18 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		payload.TypeMapper = typeMapper
 	} else {
 		yellow := color.New(color.FgYellow)
-		_, _ = yellow.Println("No type mapping file found at: " + typeMapperFilePath)
+		_, _ = yellow.Println("No type mapping file not found at: " + typeMapperFilePath)
 	}
 
+	ignoreListFilePath := filepath.Join(projectPath, "templates", "data", "ignore.json")
+	ignoreList, err := ignore_list.Parse(ignoreListFilePath)
+	if err == nil {
+		green := color.New(color.FgGreen)
+		_, _ = green.Println("Ignore list file found at: " + ignoreListFilePath)
+		payload.IgnoreList = ignoreList
+	} else {
+		yellow := color.New(color.FgYellow)
+		_, _ = yellow.Println("Ignore list file not found at: " + ignoreListFilePath)
+	}
 	return payload, nil
 }
