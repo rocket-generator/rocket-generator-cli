@@ -2,6 +2,7 @@ package ignore_list
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -53,18 +54,21 @@ func Parse(filePath string) (*IgnoreList, error) {
 		// set lowercase
 		key := strings.ToLower(endpoint.Method) + " " + strings.ToLower(endpoint.Path)
 		result.Endpoints[key] = struct{}{}
+		fmt.Println("Ignore Endpoint Entry: --> " + key)
 	}
 
 	for _, table := range raw.Tables {
 		// set lowercase
 		key := strings.ToLower(table)
 		result.Tables[key] = struct{}{}
+		fmt.Println("Ignore Table Entry: --> " + key)
 	}
 
 	for _, response := range raw.Responses {
 		// set lowercase
 		key := strings.ToLower(response)
 		result.Responses[key] = struct{}{}
+		fmt.Println("Ignore Response Entry: --> " + key)
 	}
 
 	return result, nil

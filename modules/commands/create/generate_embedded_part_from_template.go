@@ -62,9 +62,24 @@ func GenerateEmbeddedPartFromTemplate(projectPath string, targetType string, pay
 						if strings.HasSuffix(*replacement, "\n") {
 							*replacement = (*replacement)[:len(*replacement)-1]
 						}
-						finalReplacement := *replacement + "\n" + placeHolder
-						updatedText := strings.ReplaceAll(string(originalContent), placeHolder, finalReplacement)
-
+						// ファイルの内容を行ごとに分割
+						lines := strings.Split(string(originalContent), "\n")
+						var newLines []string
+						// 各行を処理
+						for _, line := range lines {
+							if strings.Contains(line, placeHolder) {
+								// プレースホルダーを含む行を見つけたら、その行の前に新しい内容を挿入
+								replacementLines := strings.Split(*replacement, "\n")
+								for _, replacementLine := range replacementLines {
+									if len(replacementLine) > 0 {
+										newLines = append(newLines, replacementLine)
+									}
+								}
+							}
+							newLines = append(newLines, line)
+						}
+						// 更新された内容をファイルに書き込む
+						updatedText := strings.Join(newLines, "\n")
 						err = os.WriteFile(targetFile, []byte(updatedText), os.ModePerm)
 						if err != nil {
 							return err

@@ -1,22 +1,18 @@
 package g_build_admin_api
 
 import (
-	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
-	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
+	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 )
 
-type Entities struct {
-	Entities []*objects.Entity
-}
-
-func (process *Process) generateEmbeddedPartFromTemplate(entities []*objects.Entity, payload *newCommand.Payload) error {
+func (process *Process) generateEmbeddedPartFromTemplate(entity interface{}, payload *newCommand.Payload) error {
 	templatePath := filepath.Join(payload.ProjectPath, "templates", "admin_api")
 	if _, err := os.Stat(templatePath); err != nil {
 		return err
@@ -47,9 +43,7 @@ func (process *Process) generateEmbeddedPartFromTemplate(entities []*objects.Ent
 					ptmplExtension := filepath.Ext(partialTemplateFile.Name())
 					if ptmplExtension == ".ptmpl" && !partialTemplateFile.IsDir() {
 						partialTemplateFullPath := filepath.Join(path, partialTemplateFile.Name())
-						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, Entities{
-							Entities: entities,
-						})
+						replacement, err := template.GenerateStringFromTemplate(partialTemplateFullPath, entity)
 						if err != nil {
 							return err
 						}
@@ -59,7 +53,25 @@ func (process *Process) generateEmbeddedPartFromTemplate(entities []*objects.Ent
 						}
 						replacedText := utilities.GetFilenameWithoutExtension(partialTemplateFile.Name())
 						placeHolder := "/* [" + replacedText + "] */"
-						updatedText := strings.ReplaceAll(string(originalContent), placeHolder, *replacement)
+
+						// ファイルの内容を行ごとに分割
+						lines := strings.Split(string(originalContent), "\n")
+						var newLines []string
+						// 各行を処理
+						for _, line := range lines {
+							if strings.Contains(line, placeHolder) {
+								// プレースホルダーを含む行を見つけたら、その行の前に新しい内容を挿入
+								replacementLines := strings.Split(*replacement, "\n")
+								for _, replacementLine := range replacementLines {
+									if len(replacementLine) > 0 {
+										newLines = append(newLines, replacementLine)
+									}
+								}
+							}
+							newLines = append(newLines, line)
+						}
+						// 更新された内容をファイルに書き込む
+						updatedText := strings.Join(newLines, "\n")
 
 						err = os.WriteFile(targetFile, []byte(updatedText), os.ModePerm)
 						if err != nil {

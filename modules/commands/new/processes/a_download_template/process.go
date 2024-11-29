@@ -84,7 +84,7 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 		payload.IgnoreList = ignoreList
 	} else {
 		yellow := color.New(color.FgYellow)
-		_, _ = yellow.Println("Ignore list file not found at: " + ignoreListFilePath)
+		_, _ = yellow.Println("Ignore list file not found at: " + ignoreListFilePath + " " + err.Error())
 	}
 	return payload, nil
 }

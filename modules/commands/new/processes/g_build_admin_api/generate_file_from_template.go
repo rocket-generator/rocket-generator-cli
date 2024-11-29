@@ -63,7 +63,6 @@ func (process *Process) generateFileFromTemplate(entity objects.Entity, payload 
 
 			// ファイルの親ディレクトリが存在しているかチェックし、なければ作成
 			if _, err := os.Stat(resultDirectory); os.IsNotExist(err) {
-				fmt.Println("Creating directory:", resultDirectory)
 				err := os.MkdirAll(resultDirectory, 0755)
 				if err != nil {
 					error_handler.HandleError(err)
