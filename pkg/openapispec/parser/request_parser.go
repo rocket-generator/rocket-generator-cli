@@ -14,11 +14,13 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 
 	for path, pathItem := range paths.Map() {
 		for method, operation := range pathItem.Operations() {
+			pathName, pathLastElement := getPathFormFromPath(path)
 			request := objects.Request{
 				Path:              path,
 				GroupRelativePath: "",
 				Method:            objects.NewNameForm(strings.ToUpper(method)),
-				PathName:          generateName(getPathFormFromPath(path)),
+				PathName:          generateName(pathName),
+				PathLastElement:   generateName(pathLastElement),
 				Description:       operation.Description,
 				RouteNameSpace:    data.RouteNameSpace,
 				OrganizationName:  data.OrganizationName,
@@ -104,9 +106,9 @@ func parsePaths(paths openapi3.Paths, data *objects.API, typeMapper *data_mapper
 	}
 }
 
-func getPathFormFromPath(path string) string {
+func getPathFormFromPath(path string) (string, string) {
 	if path == "/" {
-		return "index"
+		return "index", "index"
 	}
 	path = strings.TrimPrefix(path, "/")
 	if strings.HasSuffix(path, "/") {
@@ -115,6 +117,7 @@ func getPathFormFromPath(path string) string {
 
 	elements := strings.Split(path, "/")
 	resultElements := make([]string, 0)
+	pathLastElement := "index"
 	for _, element := range elements {
 		if strings.HasPrefix(element, "{") && strings.HasSuffix(element, "}") {
 			count := len(resultElements)
@@ -123,8 +126,9 @@ func getPathFormFromPath(path string) string {
 			}
 		} else {
 			resultElements = append(resultElements, strings.ToLower(element))
+			pathLastElement = strings.ToLower(element)
 		}
 	}
 	pathName := strings.Join(resultElements, "_")
-	return strings.ToLower(pathName)
+	return strings.ToLower(pathName), pathLastElement
 }

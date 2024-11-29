@@ -20,7 +20,7 @@ type Entity struct {
 	Time               string
 	OrganizationName   string
 	Authenticatable    bool
-	RequiredIndexes    [][]string
+	Indexes            []*Index
 	Index              int
 	IndexString4Digit  string
 	Hash12Digit        string

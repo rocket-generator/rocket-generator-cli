@@ -1,12 +1,13 @@
 package parser
 
 import (
-	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 )
 
 // ParsePlantUML ...
@@ -71,6 +72,7 @@ func ParsePlantUML(filePath string, projectName string, organizationName string,
 					Name:         generateName(name),
 					DataType:     generateName(dataType),
 					ObjectType:   data_mapper.MapString(typeMapper, "database", dataType),
+					CodeType:     data_mapper.MapString(typeMapper, "code", dataType),
 					Primary:      primary,
 					Nullable:     nullable,
 					DefaultValue: defaultValue,
@@ -99,7 +101,7 @@ func ParsePlantUML(filePath string, projectName string, organizationName string,
 				} else {
 					columnObject.IsSystemUseColumn = false
 				}
-				columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject)
+				columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject, typeMapper)
 			}
 		}
 		data.Entities = append(data.Entities, &entityObject)

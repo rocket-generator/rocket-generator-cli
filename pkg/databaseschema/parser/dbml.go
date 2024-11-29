@@ -67,7 +67,6 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 			Time:               time.Now().Format("150405"),
 			OrganizationName:   organizationName,
 			Authenticatable:    false,
-			RequiredIndexes:    [][]string{},
 			Index:              index + 1,
 			IndexString4Digit:  fmt.Sprintf("%04d", index+1),
 			Hash12Digit:        fmt.Sprintf("%s%04d", time.Now().Format("20060102"), index+1),
@@ -102,6 +101,7 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 				DataType:     generateName(dataType),
 				DataSize:     dataSize,
 				ObjectType:   data_mapper.MapString(typeMapper, "database", dataType),
+				CodeType:     data_mapper.MapString(typeMapper, "code", dataType),
 				Primary:      primary,
 				Nullable:     nullable,
 				DefaultValue: defaultValue,
@@ -134,7 +134,15 @@ func ParseTables(dbmlObject *core.DBML, organizationName string, typeMapper *dat
 				columnObject.IsSystemUseColumn = false
 			}
 
-			columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject)
+			columnObject.FakerType = GuessFakerType(entityObject.Name.Original, columnObject, typeMapper)
+		}
+		for _, index := range entity.Indexes {
+			columns := []string{}
+			columns = append(columns, index.Fields...)
+			entityObject.Indexes = append(entityObject.Indexes, &objects.Index{
+				Columns:  columns,
+				IsUnique: index.Settings.Unique,
+			})
 		}
 		entities = append(entities, &entityObject)
 	}

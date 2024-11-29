@@ -9,6 +9,7 @@ type Request struct {
 	OrganizationName  string
 	Method            NameForm
 	PathName          Name
+	PathLastElement   Name
 	Description       string
 	AddParamsForTest  string
 	Services          []string

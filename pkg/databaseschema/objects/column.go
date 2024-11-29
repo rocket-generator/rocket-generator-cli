@@ -6,6 +6,7 @@ type Column struct {
 	DataType          Name
 	DataSize          int
 	ObjectType        string
+	CodeType          string
 	Primary           bool
 	DefaultValue      string
 	Nullable          bool

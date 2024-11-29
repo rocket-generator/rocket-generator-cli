@@ -17,10 +17,12 @@ func (process *Process) Execute(payload *newCommand.Payload) (*newCommand.Payloa
 	for _, entity := range payload.DatabaseSchema.Entities {
 		ignoreKey := strings.ToLower(entity.Name.Original)
 		// Ignore if ignoreKey is in payload.IgnoreList
-		if _, ok := payload.IgnoreList.Tables[ignoreKey]; ok {
-			yellow := color.New(color.FgYellow)
-			_, _ = yellow.Println("* Ignore db table: " + ignoreKey)
-			continue
+		if payload.IgnoreList != nil {
+			if _, ok := payload.IgnoreList.Tables[ignoreKey]; ok {
+				yellow := color.New(color.FgYellow)
+				_, _ = yellow.Println("* Ignore db table: " + ignoreKey)
+				continue
+			}
 		}
 		green := color.New(color.FgGreen)
 		_, _ = green.Println("* Generate files from db table: " + entity.Name.Original)

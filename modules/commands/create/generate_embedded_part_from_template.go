@@ -1,14 +1,15 @@
 package create
 
 import (
-	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
-	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/rocket-generator/rocket-generator-cli/internal/utilities"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/error_handler"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/openapispec/objects"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/template"
 )
 
 type Entities struct {
@@ -18,7 +19,7 @@ type Entities struct {
 func GenerateEmbeddedPartFromTemplate(projectPath string, targetType string, payload interface{}) error {
 	templatePath := filepath.Join(projectPath, "templates", "create", targetType)
 	if _, err := os.Stat(templatePath); err != nil {
-		return err
+		return nil
 	}
 	err := filepath.Walk(templatePath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {

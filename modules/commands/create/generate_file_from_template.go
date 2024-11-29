@@ -15,8 +15,11 @@ import (
 func GenerateFileFromTemplate(projectPath string, targetType string, payload interface{}) error {
 	templatePath := filepath.Join(projectPath, "templates", "create", targetType)
 	if _, err := os.Stat(templatePath); err != nil {
-		return err
+		// No template directory. Just skip
+		fmt.Println("[SKIP] No template directory for ", targetType)
+		return nil
 	}
+
 	err := filepath.Walk(templatePath, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			error_handler.HandleError(err)
@@ -29,7 +32,13 @@ func GenerateFileFromTemplate(projectPath string, targetType string, payload int
 				error_handler.HandleError(err)
 				return err
 			}
-			resultDirectory := filepath.Join(projectPath, relativePath)
+			resultDirectoryRaw := filepath.Join(projectPath, relativePath)
+			// resultDirectory もテンプレートの処理を行う
+			resultDirectory, err := processFileNameTemplate(resultDirectoryRaw, payload)
+			if err != nil {
+				error_handler.HandleError(err)
+				return err
+			}
 
 			// ファイル名のテンプレート処理
 			_, file := filepath.Split(path)
@@ -50,6 +59,16 @@ func GenerateFileFromTemplate(projectPath string, targetType string, payload int
 			if _, err := os.Stat(destinationPath); err == nil {
 				fmt.Println("Skipping file:", destinationPath)
 				return nil
+			}
+
+			// ファイルの親ディレクトリが存在しているかチェックし、なければ作成
+			if _, err := os.Stat(resultDirectory); os.IsNotExist(err) {
+				fmt.Println("Creating directory:", resultDirectory)
+				err := os.MkdirAll(resultDirectory, 0755)
+				if err != nil {
+					error_handler.HandleError(err)
+					return err
+				}
 			}
 
 			_, err = template.GenerateFileFromTemplate(path, projectPath, resultDirectory, payload)

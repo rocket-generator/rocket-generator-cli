@@ -1,8 +1,10 @@
 package parser
 
 import (
-	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 	"strings"
+
+	"github.com/rocket-generator/rocket-generator-cli/pkg/data_mapper"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 )
 
 func IsTypeInteger(dataType string) bool {
@@ -31,7 +33,7 @@ func IsTypeString(dataType string) bool {
 	return false
 }
 
-func GuessFakerType(tableName string, column *objects.Column) string {
+func GuessFakerType(tableName string, column *objects.Column, typeMapper *data_mapper.Mapper) string {
 	nameMap := map[string]string{
 		"longitude":     "longitude",
 		"latitude":      "latitude",
@@ -52,13 +54,28 @@ func GuessFakerType(tableName string, column *objects.Column) string {
 		"date":     "date",
 		"datetime": "dateTime",
 		"json":     "json",
+		"jsonb":    "json",
+		"decimal":  "randomFloat",
+		"numeric":  "randomFloat",
+		"float":    "randomFloat",
+		"double":   "randomFloat",
+		"bigint":   "randomNumber",
+		"int":      "randomNumber",
+		"integer":  "randomNumber",
+		"tinyint":  "randomNumber",
 	}
 
 	columnName := column.Name.Default.Snake
-	fakerTypeString := column.DataType.Original
+	fakerTypeString := column.DataType.Default.Snake
 	for key, value := range nameMap {
 		if strings.HasSuffix(columnName, key) {
 			return value
+		}
+	}
+
+	if typeMapper != nil {
+		if data_mapper.MapStringWithNil(typeMapper, "faker", column.DataType.Default.Snake) != nil {
+			return data_mapper.MapString(typeMapper, "faker", column.DataType.Default.Snake)
 		}
 	}
 

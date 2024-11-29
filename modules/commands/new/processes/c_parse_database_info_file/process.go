@@ -3,8 +3,10 @@ package c_parse_database_info_file
 import (
 	"encoding/json"
 	"fmt"
-	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
 	"os"
+
+	newCommand "github.com/rocket-generator/rocket-generator-cli/modules/commands/new/payload"
+	"github.com/rocket-generator/rocket-generator-cli/pkg/databaseschema/objects"
 )
 
 type Process struct {
@@ -12,7 +14,7 @@ type Process struct {
 
 type DB struct {
 	Authenticatable bool       `json:"authenticatable"`
-	RequiredIndex   [][]string `json:"requiredIndexes"`
+	RequiredIndexes [][]string `json:"requiredIndexes"`
 }
 
 type DBs map[string]DB
@@ -55,7 +57,12 @@ func updateDBSpec(payload *newCommand.Payload, databases *DBs) {
 			} else {
 				fmt.Println("Normal: " + table.Name.Default.Snake)
 			}
-			payload.DatabaseSchema.Entities[index].RequiredIndexes = db.RequiredIndex
+			for _, requiredIndex := range db.RequiredIndexes {
+				payload.DatabaseSchema.Entities[index].Indexes = append(payload.DatabaseSchema.Entities[index].Indexes, &objects.Index{
+					Columns:  requiredIndex,
+					IsUnique: true,
+				})
+			}
 		}
 	}
 }

@@ -45,3 +45,18 @@ func MapString(mapper *Mapper, category string, value string) string {
 
 	return value
 }
+
+func MapStringWithNil(mapper *Mapper, category string, value string) *string {
+	if mapper == nil {
+		return nil
+	}
+	lowerCaseCategory := strings.ToLower(category)
+	if mapElement, ok := (*mapper)[lowerCaseCategory]; ok {
+		lowerCaseValue := strings.ToLower(value)
+		if mappedValue, ok := mapElement[lowerCaseValue]; ok {
+			return &mappedValue
+		}
+	}
+
+	return nil
+}
